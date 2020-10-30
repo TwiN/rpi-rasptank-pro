@@ -29,24 +29,24 @@ func main() {
 	work := func() {
 		gobot.Every(3*time.Second, func() {
 			log.Println("o.o")
-			var speed int32 = 5 // 255 = full speed!
+			var speed int32 = 10 // 255 = full speed!
 			if err := adaFruit.SetDCMotorSpeed(2, speed); err != nil {
-				panic(err)
+				log.Println(err)
 			}
 			if err := adaFruit.RunDCMotor(2, i2c.AdafruitForward); err != nil {
-				panic(err)
+				log.Println(err)
 			}
 			time.Sleep(100 * time.Millisecond)
 			if err := adaFruit.RunDCMotor(2, i2c.AdafruitRelease); err != nil {
-				panic(err)
+				log.Println(err)
 			}
 			time.Sleep(100 * time.Millisecond)
 			if err := adaFruit.RunDCMotor(2, i2c.AdafruitBackward); err != nil {
-				panic(err)
+				log.Println(err)
 			}
 			time.Sleep(100 * time.Millisecond)
 			if err := adaFruit.RunDCMotor(2, i2c.AdafruitRelease); err != nil {
-				panic(err)
+				log.Println(err)
 			}
 		})
 	}
