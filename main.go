@@ -61,6 +61,8 @@ func adafruitServoMotorRunner(a *i2c.AdafruitMotorHatDriver) (err error) {
 	return
 }
 
+// 12: right DC motor
+
 func main() {
 	adaptor := raspi.NewAdaptor()
 	//driver := i2c.NewAdafruitMotorHatDriver(adaptor)
@@ -75,6 +77,7 @@ func main() {
 	led := gpio.NewLedDriver(adaptor, "12")
 	work := func() {
 		gobot.Every(3*time.Second, func() {
+			log.Println(led.Name())
 			err := led.Toggle()
 			if err != nil {
 				log.Println(err)
