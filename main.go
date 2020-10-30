@@ -14,8 +14,9 @@ import (
 // 40: left DC motor forward
 
 func main() {
-	adaptor := raspi.NewAdaptor()
-	//led := gpio.NewLedDriver(adaptor, os.Args[1])
+	rpi := raspi.NewAdaptor()
+	board := raspi.NewAdaptor()
+	//led := gpio.NewLedDriver(rpi, os.Args[1])
 	//work := func() {
 	//	gobot.Every(3*time.Second, func() {
 	//		log.Println("Toggling")
@@ -25,9 +26,11 @@ func main() {
 	//		}
 	//	})
 	//}
-	adaFruit := i2c.NewAdafruitMotorHatDriver(adaptor)
+	screen := i2c.NewGroveLcdDriver(board)
+	adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
 	work := func() {
 		gobot.Every(3*time.Second, func() {
+			screen.Write("hello")
 			log.Println("o.o")
 			var speed int32 = 10 // 255 = full speed!
 			if err := adaFruit.SetDCMotorSpeed(2, speed); err != nil {
@@ -52,9 +55,9 @@ func main() {
 	}
 
 	robot := gobot.NewRobot("bot",
-		[]gobot.Connection{adaptor},
+		[]gobot.Connection{rpi, board},
 		//[]gobot.Device{led},
-		[]gobot.Device{adaFruit},
+		[]gobot.Device{adaFruit, screen},
 		work,
 	)
 
