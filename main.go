@@ -28,14 +28,9 @@ func degree2pulse(deg int) int32 {
 
 func adafruitServoMotorRunner(a *i2c.AdafruitMotorHatDriver) (err error) {
 	log.Printf("Servo Motor Run Loop...\n")
-	// Changing from the default 0x40 address because this configuration involves
-	// a Servo HAT stacked on top of a DC/Stepper Motor HAT on top of the Pi.
-	stackedHatAddr := 0x41
+
 	var channel byte = 1
 	deg := 90
-
-	// update the I2C address state
-	a.SetServoHatAddress(stackedHatAddr)
 
 	// Do not need to set this every run loop
 	freq := 60.0
