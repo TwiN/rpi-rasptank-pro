@@ -77,6 +77,7 @@ func main() {
 	led := gpio.NewLedDriver(adaptor, "11")
 	work := func() {
 		gobot.Every(3*time.Second, func() {
+			log.Println("Toggling")
 			err := led.Toggle()
 			if err != nil {
 				log.Println(err)
