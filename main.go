@@ -2,6 +2,7 @@ package main
 
 import (
 	"gobot.io/x/gobot"
+	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
@@ -62,17 +63,28 @@ func adafruitServoMotorRunner(a *i2c.AdafruitMotorHatDriver) (err error) {
 
 func main() {
 	adaptor := raspi.NewAdaptor()
-	hatDriver := i2c.NewAdafruitMotorHatDriver(adaptor)
+	//driver := i2c.NewAdafruitMotorHatDriver(adaptor)
+	//work := func() {
+	//	gobot.Every(5*time.Second, func() {
+	//		err := adafruitServoMotorRunner(driver)
+	//		if err != nil {
+	//			log.Println(err)
+	//		}
+	//	})
+	//}
+	led := gpio.NewLedDriver(adaptor, "12")
 	work := func() {
-		gobot.Every(5*time.Second, func() {
-			err := adafruitServoMotorRunner(hatDriver)
-			panic(err)
+		gobot.Every(3*time.Second, func() {
+			err := led.Toggle()
+			if err != nil {
+				log.Println(err)
+			}
 		})
 	}
 
-	robot := gobot.NewRobot("adaFruitBot",
+	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{adaptor},
-		[]gobot.Device{hatDriver},
+		[]gobot.Device{led},
 		work,
 	)
 
