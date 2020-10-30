@@ -6,3 +6,9 @@ build-and-run:
 
 update:
 	git pull
+
+i2c:
+	i2cdetect -y 1
+
+gpio:
+	raspi-gpio get
