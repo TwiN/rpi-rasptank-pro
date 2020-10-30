@@ -26,14 +26,23 @@ func main() {
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
 	screen := i2c.NewSSD1306Driver(rpi)
-	adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
+	//adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
 	work := func() {
 		gobot.Every(3*time.Second, func() {
+			screen.Reset()
+			screen.Set(1, 1, 1)
+			screen.Set(1, 2, 1)
+			screen.Set(1, 3, 1)
+			screen.Set(1, 4, 1)
+			screen.Set(1, 5, 1)
+			screen.Set(2, 1, 1)
+			screen.Set(2, 2, 1)
+			screen.Set(2, 3, 1)
+			screen.Set(2, 4, 1)
+			screen.Set(2, 5, 1)
+			time.Sleep(time.Second * 3)
 			//pca9685.SetPWMFreq(50)
 			//pca9685.SetPWM()
-			screen.Set(1, 1, 1)
-			screen.Set(2, 2, 2)
-			screen.Set(3, 3, 3)
 			//log.Println("o.o")
 			//var speed int32 = 10 // 255 = full speed!
 			//if err := adaFruit.SetDCMotorSpeed(2, speed); err != nil {
@@ -59,7 +68,7 @@ func main() {
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{adaFruit, screen},
+		[]gobot.Device{screen},
 		work,
 	)
 
