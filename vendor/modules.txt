@@ -18,6 +18,7 @@ gobot.io/x/gobot
 gobot.io/x/gobot/drivers/gpio
 gobot.io/x/gobot/drivers/i2c
 gobot.io/x/gobot/drivers/spi
+gobot.io/x/gobot/platforms/chip
 gobot.io/x/gobot/platforms/raspi
 gobot.io/x/gobot/sysfs
 # periph.io/x/periph v3.6.2+incompatible

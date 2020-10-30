@@ -3,6 +3,7 @@ package main
 import (
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/drivers/i2c"
+	"gobot.io/x/gobot/platforms/chip"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
 	"time"
@@ -15,7 +16,7 @@ import (
 
 func main() {
 	rpi := raspi.NewAdaptor()
-	board := raspi.NewAdaptor()
+	board := chip.NewAdaptor()
 	//led := gpio.NewLedDriver(rpi, os.Args[1])
 	//work := func() {
 	//	gobot.Every(3*time.Second, func() {
