@@ -46,6 +46,9 @@ func (a *Arm) Move() {
 	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 45); err != nil {
 		fmt.Println(err)
 	}
+	if err := a.Driver.ServoWrite(CameraVerticalServoPin, 45); err != nil {
+		fmt.Println(err)
+	}
 }
 
 func (a *Arm) Center() {
@@ -83,7 +86,7 @@ func (a *Arm) Sweep() {
 		fmt.Println(err)
 	}
 	for i := 10; i > 170; i++ {
-		if err := a.Driver.ServoWrite(BaseVerticalServoPin, 90); err != nil {
+		if err := a.Driver.ServoWrite(BaseVerticalServoPin, byte(i)); err != nil {
 			fmt.Println(err)
 		}
 		time.Sleep(100 * time.Millisecond)
