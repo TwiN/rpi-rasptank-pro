@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
+	"github.com/TwinProduction/rpi-rasptank-pro/motor"
 	"gobot.io/x/gobot"
-	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
 	"time"
@@ -29,33 +29,20 @@ func main() {
 	//	})
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
-
-	leftMotor := gpio.NewMotorDriver(rpi, "40")
-	leftMotor.ForwardPin = "40"
-	leftMotor.BackwardPin = "37"
-	rightMotor := gpio.NewMotorDriver(rpi, "12")
-	rightMotor.ForwardPin = "12"
-	rightMotor.BackwardPin = "13"
+	motors := motor.NewMotors(rpi)
 	work := func() {
 		err := display.DrawString(screen, fmt.Sprintf("%s", GetLocalIP()))
 		if err != nil {
 			log.Printf("Failed to write on display: %s", err.Error())
 		}
 		gobot.Every(1*time.Second, func() {
-			if leftMotor.CurrentDirection == "forward" {
-				leftMotor.Direction("backward")
-				rightMotor.Direction("backward")
-			} else {
-				leftMotor.Direction("forward")
-				rightMotor.Direction("forward")
-			}
-			fmt.Println(leftMotor.CurrentDirection)
+			motors.Right()
 		})
 	}
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen, leftMotor, rightMotor},
+		[]gobot.Device{screen, motors.LeftMotor, motors.RightMotor},
 		work,
 	)
 
