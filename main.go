@@ -30,16 +30,11 @@ func main() {
 	work := func() {
 		gobot.Every(3*time.Second, func() {
 			screen.Reset()
-			screen.Set(1, 1, 1)
-			screen.Set(1, 2, 1)
-			screen.Set(1, 3, 1)
-			screen.Set(1, 4, 1)
-			screen.Set(1, 5, 1)
-			screen.Set(2, 1, 1)
-			screen.Set(2, 2, 1)
-			screen.Set(2, 3, 1)
-			screen.Set(2, 4, 1)
-			screen.Set(2, 5, 1)
+			for x := 0; x < 50; x++ {
+				for y := 0; y < 50; y++ {
+					screen.Set(x, y, 2)
+				}
+			}
 			time.Sleep(time.Second * 3)
 			//pca9685.SetPWMFreq(50)
 			//pca9685.SetPWM()
