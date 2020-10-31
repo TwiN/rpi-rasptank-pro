@@ -56,22 +56,24 @@ func (us *UltrasonicSensor) MeasureDistance() float32 {
 	us.triggerPin.Low()
 
 	var start, end time.Time
-	for i := 0; i < Limit && us.echoPin.Read() != rpio.High; i++ {
-		if i+2 == Limit {
-			fmt.Println("WILL HIT THE LIMIT (High)")
+	for i := 0; i <= Limit && us.echoPin.Read() != rpio.High; i++ {
+		// If we hit the Limit, then the reading is no longer valid
+		// Therefore, we're better off returning 0 as a way to say
+		// that there's either a problem, or something is bouncing
+		// the sound wave elsewhere
+		if i == Limit {
+			return 0
 		}
 	}
 	start = time.Now()
-	for i := 0; i < Limit && us.echoPin.Read() != rpio.Low; i++ {
-		if i+100 == Limit {
-			fmt.Println("WILL HIT THE LIMIT (Low)")
+	for i := 0; i <= Limit && us.echoPin.Read() != rpio.Low; i++ {
+		// If we hit the limit, then the reading is no longer valid
+		// Therefore, we're better off returning 0 as a way to say
+		// that there's either a problem, or something is bouncing
+		// the sound wave elsewhere
+		if i == Limit {
+			return 0
 		}
-		// We're waiting for 1ns between every iteration in case the number of iterations hits the Limit.
-		// Based on the hardware used, this limit could be reached extremely fast, which means that as a
-		// result, the distance calculated could show something pretty close when it isn't.
-		// If having a potentially slightly higher than desirable distance measured is a problem for you,
-		// have a look at MeasureDistanceReliably
-		time.Sleep(time.Nanosecond)
 	}
 	end = time.Now()
 	return (float32(end.UnixNano()-start.UnixNano()) * (SpeedOfSoundInCentimetersPerSecond / 2)) / float32(time.Second)

@@ -28,7 +28,7 @@ import (
 func main() {
 	rpi := raspi.NewAdaptor()
 	screen := display.NewDisplay(rpi)
-	engine := controller.NewEngine(rpi)
+	vehicle := controller.NewVehicle(rpi)
 
 	led := gpio.NewLedDriver(rpi, "32")
 	ultrasonicSensor := sensor.NewUltrasonicSensor()
@@ -37,14 +37,26 @@ func main() {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
 		gobot.Every(1*time.Second, func() {
-			log.Printf("%f", ultrasonicSensor.MeasureDistance())
-			//engine.Right()
+			distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
+			if distanceFromObstacle < 3 {
+				vehicle.Backward()
+				time.Sleep(100 * time.Millisecond)
+				vehicle.Stop()
+			} else if distanceFromObstacle < 10 {
+				vehicle.Right()
+				time.Sleep(30 * time.Millisecond)
+				vehicle.Stop()
+			} else {
+				vehicle.Forward()
+				time.Sleep(100 * time.Millisecond)
+				vehicle.Stop()
+			}
 		})
 	}
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen.Driver, engine.LeftMotor, engine.RightMotor, led},
+		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, led},
 		work,
 	)
 
