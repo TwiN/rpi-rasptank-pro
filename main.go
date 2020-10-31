@@ -29,10 +29,10 @@ func main() {
 	//adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
 	work := func() {
 		gobot.Every(3*time.Second, func() {
-			screen.Clear()
-			for x := 1; x < 30; x++ {
-				for y := 1; y < 30; y++ {
-					screen.Set(x, y, 1)
+			screen.Reset()
+			for x := 1; x < 20; x++ {
+				for y := 1; y < 20; y++ {
+					screen.Set(x, y, 0)
 				}
 			}
 			time.Sleep(time.Second * 2)
