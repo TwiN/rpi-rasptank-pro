@@ -13,6 +13,7 @@ import (
 // 40: left DC motor forward
 
 func main() {
+	GetLocalIP()
 	rpi := raspi.NewAdaptor()
 	//led := gpio.NewLedDriver(rpi, os.Args[1])
 	//work := func() {
