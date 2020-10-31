@@ -1,12 +1,9 @@
 package main
 
 import (
-	"github.com/pbnjay/pixfont"
+	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"gobot.io/x/gobot"
-	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
-	"image"
-	"image/color"
 	"time"
 )
 
@@ -28,15 +25,11 @@ func main() {
 	//	})
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
-	screen := i2c.NewSSD1306Driver(rpi, i2c.WithBus(1), i2c.WithAddress(0x3c))
+	screen := display.CreateDriver(rpi)
 	//adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
 	work := func() {
 		gobot.Every(3*time.Second, func() {
-			screen.Reset()
-			img := image.NewRGBA(image.Rect(0, 0, 128, 64))
-			pixfont.DrawString(img, 0, 0, "hello", color.White)
-			screen.ShowImage(img)
-			//screen.Display()
+			display.DrawString(screen, "Hello, world")
 			time.Sleep(time.Second * 2)
 			//pca9685.SetPWMFreq(50)
 			//pca9685.SetPWM()
