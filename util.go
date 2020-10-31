@@ -1,17 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"net"
-	"os"
+	"strings"
 )
 
-func GetLocalIP() {
-	host, _ := os.Hostname()
-	addrs, _ := net.LookupIP(host)
-	for _, addr := range addrs {
-		if ipv4 := addr.To4(); ipv4 != nil {
-			fmt.Println("IPv4: ", ipv4)
+func GetLocalIP() string {
+	addresses, _ := net.InterfaceAddrs()
+	for _, addr := range addresses {
+		if !strings.HasPrefix(addr.String(), "127.") && !strings.Contains(addr.String(), ":") {
+			return strings.TrimSuffix(addr.String(), "/24")
 		}
 	}
+	return "Unknown"
 }

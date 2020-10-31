@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/platforms/raspi"
+	"log"
 	"time"
 )
 
@@ -15,6 +17,11 @@ import (
 func main() {
 	GetLocalIP()
 	rpi := raspi.NewAdaptor()
+	screen := display.CreateDriver(rpi)
+	err := display.DrawString(screen, fmt.Sprintf("IP: %s", GetLocalIP()))
+	if err != nil {
+		log.Printf("Failed to write on display: %s", err.Error())
+	}
 	//led := gpio.NewLedDriver(rpi, os.Args[1])
 	//work := func() {
 	//	gobot.Every(3*time.Second, func() {
@@ -26,12 +33,10 @@ func main() {
 	//	})
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
-	screen := display.CreateDriver(rpi)
+
 	//adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
 	work := func() {
 		gobot.Every(3*time.Second, func() {
-			display.DrawString(screen, "Hello, world")
-			time.Sleep(time.Second * 2)
 			//pca9685.SetPWMFreq(50)
 			//pca9685.SetPWM()
 			//log.Println("o.o")
