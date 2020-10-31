@@ -38,17 +38,21 @@ func main() {
 		}
 		gobot.Every(1*time.Second, func() {
 			distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
-			if distanceFromObstacle < 3 {
+			log.Printf("distance from obstacle: %f", distanceFromObstacle)
+			if distanceFromObstacle < 5 {
+				log.Println("going backward")
 				vehicle.Backward()
-				time.Sleep(100 * time.Millisecond)
+				time.Sleep(200 * time.Millisecond)
 				vehicle.Stop()
-			} else if distanceFromObstacle < 10 {
+			} else if distanceFromObstacle < 15 {
+				log.Println("going right")
 				vehicle.Right()
-				time.Sleep(30 * time.Millisecond)
+				time.Sleep(200 * time.Millisecond)
 				vehicle.Stop()
 			} else {
+				log.Println("going forward")
 				vehicle.Forward()
-				time.Sleep(100 * time.Millisecond)
+				time.Sleep(300 * time.Millisecond)
 				vehicle.Stop()
 			}
 		})
