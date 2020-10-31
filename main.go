@@ -42,11 +42,12 @@ func main() {
 		if err := screen.DisplayIP(); err != nil {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
-		gobot.Every(3*time.Second, func() {
-			//err := led.Toggle()
-			//if err != nil {
-			//	log.Println(err)
-			//}
+		gobot.Every(2*time.Second, func() {
+			led.Brightness(3)
+			err := led.Toggle()
+			if err != nil {
+				log.Println(err)
+			}
 			//engine.Right()
 		})
 	}
