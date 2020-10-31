@@ -42,7 +42,8 @@ func main() {
 		var lastDirection string
 		var stuckCounter int
 		var wentBackAndForth bool
-		gobot.Every(1*time.Second, func() {
+		//gobot.Every(1*time.Second, func() {
+		for {
 			distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
 			log.Printf("distance from obstacle: %f", distanceFromObstacle)
 			if wentBackAndForth || math.Round(float64(lastDistanceFromObstacle)) == math.Round(float64(distanceFromObstacle)) {
@@ -70,15 +71,10 @@ func main() {
 					vehicle.Right()
 					time.Sleep(300 * time.Millisecond)
 					vehicle.Stop()
-				} else if distanceFromObstacle < 3 {
+				} else if distanceFromObstacle < 15 {
 					log.Println("going backward")
 					vehicle.Backward()
 					time.Sleep(500 * time.Millisecond)
-					vehicle.Stop()
-				} else if distanceFromObstacle < 20 {
-					log.Println("going righttttttt")
-					vehicle.Right()
-					time.Sleep(300 * time.Millisecond)
 					vehicle.Stop()
 				} else {
 					log.Println("going forward")
@@ -93,7 +89,7 @@ func main() {
 				(lastDirection == controller.DirectionBackward && vehicle.LastDirection == controller.DirectionForward)
 			lastDirection = vehicle.LastDirection
 			lastDistanceFromObstacle = distanceFromObstacle
-		})
+		}
 	}
 
 	robot := gobot.NewRobot("bot",
