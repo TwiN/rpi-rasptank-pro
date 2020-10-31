@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	LeftMotorForward   = "40"
-	LeftMotorBackward  = "37"
-	RightMotorForward  = "12"
-	RightMotorBackward = "13"
+	LeftMotorForward   = "37"
+	LeftMotorBackward  = "40"
+	RightMotorForward  = "13"
+	RightMotorBackward = "12"
 
 	DirectionForward  = "forward"
 	DirectionBackward = "backward"
