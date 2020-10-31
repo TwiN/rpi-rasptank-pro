@@ -27,7 +27,7 @@ func DrawString(driver *i2c.SSD1306Driver, text string) error {
 	flipped := image.NewRGBA(rectangle)
 	for j := 0; j < img.Bounds().Dy(); j++ {
 		for i := 0; i < img.Bounds().Dx(); i++ {
-			flipped.Set(Width-i, j, img.At(i, j))
+			flipped.Set(Width-i, Height-j, img.At(i, j))
 		}
 	}
 	driver.Clear()
