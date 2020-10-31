@@ -52,7 +52,7 @@ func main() {
 			} else {
 				log.Println("going forward")
 				vehicle.Forward()
-				time.Sleep(300 * time.Millisecond)
+				time.Sleep(800 * time.Millisecond)
 				vehicle.Stop()
 			}
 		})
