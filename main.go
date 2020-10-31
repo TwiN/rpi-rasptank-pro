@@ -56,7 +56,7 @@ func main() {
 					log.Println("going backward")
 					vehicle.Backward()
 				}
-				msToSleep := stuckCounter * 100
+				msToSleep := stuckCounter * 200
 				if msToSleep > 1000 {
 					msToSleep = 1000
 				}
@@ -68,7 +68,7 @@ func main() {
 					// If the distance was 0, there's probably something blocking the sensor, so we'll just turn
 					log.Println("going right")
 					vehicle.Right()
-					time.Sleep(200 * time.Millisecond)
+					time.Sleep(300 * time.Millisecond)
 					vehicle.Stop()
 				} else if distanceFromObstacle < 3 {
 					log.Println("going backward")
@@ -78,7 +78,7 @@ func main() {
 				} else if distanceFromObstacle < 20 {
 					log.Println("going left")
 					vehicle.Left()
-					time.Sleep(200 * time.Millisecond)
+					time.Sleep(300 * time.Millisecond)
 					vehicle.Stop()
 				} else {
 					log.Println("going forward")
