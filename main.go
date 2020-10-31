@@ -1,15 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
-	"github.com/mcuadros/go-rpi-ws281x"
+	"github.com/rpi-ws281x/rpi-ws281x-go"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
-	"image"
-	"image/color"
-	"image/draw"
 	"log"
 	"time"
 )
@@ -40,8 +38,23 @@ func main() {
 	//	})
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
-	ws2812Config := &ws281x.DefaultConfig
-	ws2812Config.Pin = 32
+	hw := ws2811.HwDetect()
+	fmt.Printf("Hardware Type    : %d\n", hw.Type)
+	fmt.Printf("Hardware Version : 0x%08X\n", hw.Version)
+	fmt.Printf("Periph base      : 0x%08X\n", hw.PeriphBase)
+	fmt.Printf("Video core base  : 0x%08X\n", hw.VideocoreBase)
+	fmt.Printf("Description      : %v\n", hw.Desc)
+
+	ws2812Options := &ws2811.DefaultOptions
+	ws2812Options.Channels[0].GpioPin = 32
+	ws2812, err := ws2811.MakeWS2811(ws2812Options)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(ws2812.Leds(1))
+	if err := ws2812.Render(); err != nil {
+		fmt.Println(err)
+	}
 
 	led := gpio.NewLedDriver(rpi, "32")
 	work := func() {
@@ -49,18 +62,6 @@ func main() {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
 		gobot.Every(3*time.Second, func() {
-			c, _ := ws281x.NewCanvas(8, 4, ws2812Config)
-			if err := c.Initialize(); err != nil {
-				log.Println(err)
-			}
-			draw.Draw(c, c.Bounds(), image.NewUniform(color.White), image.ZP, draw.Over)
-			if err := c.Render(); err != nil {
-				log.Println(err)
-			}
-			time.Sleep(time.Second * 1)
-
-			// don't forget close the canvas, if not you leds may remain on
-			c.Close()
 			//err := led.Toggle()
 			//if err != nil {
 			//	log.Println(err)
