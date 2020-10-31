@@ -3,7 +3,7 @@ package main
 import (
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/drivers/i2c"
-	"gobot.io/x/gobot/platforms/raspi"
+	"gobot.io/x/gobot/platforms/firmata"
 	"time"
 )
 
@@ -13,7 +13,7 @@ import (
 // 40: left DC motor forward
 
 func main() {
-	rpi := raspi.NewAdaptor()
+	rpi := firmata.NewAdaptor()
 	//led := gpio.NewLedDriver(rpi, os.Args[1])
 	//work := func() {
 	//	gobot.Every(3*time.Second, func() {
