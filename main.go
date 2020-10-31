@@ -51,7 +51,6 @@ func main() {
 			time.Sleep(25 * time.Millisecond)
 			leftMotor.Off()
 			rightMotor.Off()
-			time.Sleep(25 * time.Millisecond)
 			leftMotor.Direction("backward")
 			rightMotor.Direction("backward")
 			if err := leftMotor.On(); err != nil {
@@ -70,7 +69,7 @@ func main() {
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen, leftMotor},
+		[]gobot.Device{screen, leftMotor, rightMotor},
 		work,
 	)
 
