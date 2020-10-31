@@ -36,61 +36,64 @@ func main() {
 		if err := screen.DisplayIP(); err != nil {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
-		servo.Center()
-		//gobot.Every(1*time.Second, func() {
-		//})
+
+		gobot.Every(3*time.Second, func() {
+			servo.Center()
+			time.Sleep(500 * time.Millisecond)
+			servo.Move(10)
+		})
 		//var lastDistanceFromObstacle float32
 		//var lastDirection string
 		//var stuckCounter int
 		//var wentBackAndForth bool
-		for {
-			//distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
-			//log.Printf("distance from obstacle: %f", distanceFromObstacle)
-			//if wentBackAndForth || math.Round(float64(lastDistanceFromObstacle)) == math.Round(float64(distanceFromObstacle)) {
-			//	wentBackAndForth = false
-			//	fmt.Println("doesn't look like you moved much..")
-			//	stuckCounter++
-			//	if stuckCounter%2 == 0 {
-			//		log.Println("going right")
-			//		vehicle.Right()
-			//	} else {
-			//		log.Println("going backward")
-			//		vehicle.Backward()
-			//	}
-			//	msToSleep := stuckCounter * 200
-			//	if msToSleep > 1000 {
-			//		msToSleep = 1000
-			//	}
-			//	time.Sleep(time.Duration(msToSleep) * time.Millisecond)
-			//	vehicle.Stop()
-			//} else {
-			//	stuckCounter = 0
-			//	if distanceFromObstacle == 0 {
-			//		// If the distance was 0, there's probably something blocking the sensor, so we'll just turn
-			//		log.Println("going right")
-			//		vehicle.Right()
-			//		time.Sleep(300 * time.Millisecond)
-			//		vehicle.Stop()
-			//	} else if distanceFromObstacle < 15 {
-			//		log.Println("going backward")
-			//		vehicle.Backward()
-			//		time.Sleep(500 * time.Millisecond)
-			//		vehicle.Stop()
-			//	} else {
-			//		log.Println("going forward")
-			//		vehicle.Forward()
-			//		time.Sleep(500 * time.Millisecond)
-			//		vehicle.Stop()
-			//	}
-			//}
-			//wentBackAndForth = (lastDirection == controller.DirectionLeft && vehicle.LastDirection == controller.DirectionRight) ||
-			//	(lastDirection == controller.DirectionRight && vehicle.LastDirection == controller.DirectionLeft) ||
-			//	(lastDirection == controller.DirectionForward && vehicle.LastDirection == controller.DirectionBackward) ||
-			//	(lastDirection == controller.DirectionBackward && vehicle.LastDirection == controller.DirectionForward)
-			//lastDirection = vehicle.LastDirection
-			//lastDistanceFromObstacle = distanceFromObstacle
-			time.Sleep(100 * time.Millisecond)
-		}
+		//for {
+		//distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
+		//log.Printf("distance from obstacle: %f", distanceFromObstacle)
+		//if wentBackAndForth || math.Round(float64(lastDistanceFromObstacle)) == math.Round(float64(distanceFromObstacle)) {
+		//	wentBackAndForth = false
+		//	fmt.Println("doesn't look like you moved much..")
+		//	stuckCounter++
+		//	if stuckCounter%2 == 0 {
+		//		log.Println("going right")
+		//		vehicle.Right()
+		//	} else {
+		//		log.Println("going backward")
+		//		vehicle.Backward()
+		//	}
+		//	msToSleep := stuckCounter * 200
+		//	if msToSleep > 1000 {
+		//		msToSleep = 1000
+		//	}
+		//	time.Sleep(time.Duration(msToSleep) * time.Millisecond)
+		//	vehicle.Stop()
+		//} else {
+		//	stuckCounter = 0
+		//	if distanceFromObstacle == 0 {
+		//		// If the distance was 0, there's probably something blocking the sensor, so we'll just turn
+		//		log.Println("going right")
+		//		vehicle.Right()
+		//		time.Sleep(300 * time.Millisecond)
+		//		vehicle.Stop()
+		//	} else if distanceFromObstacle < 15 {
+		//		log.Println("going backward")
+		//		vehicle.Backward()
+		//		time.Sleep(500 * time.Millisecond)
+		//		vehicle.Stop()
+		//	} else {
+		//		log.Println("going forward")
+		//		vehicle.Forward()
+		//		time.Sleep(500 * time.Millisecond)
+		//		vehicle.Stop()
+		//	}
+		//}
+		//wentBackAndForth = (lastDirection == controller.DirectionLeft && vehicle.LastDirection == controller.DirectionRight) ||
+		//	(lastDirection == controller.DirectionRight && vehicle.LastDirection == controller.DirectionLeft) ||
+		//	(lastDirection == controller.DirectionForward && vehicle.LastDirection == controller.DirectionBackward) ||
+		//	(lastDirection == controller.DirectionBackward && vehicle.LastDirection == controller.DirectionForward)
+		//lastDirection = vehicle.LastDirection
+		//lastDistanceFromObstacle = distanceFromObstacle
+		//time.Sleep(100 * time.Millisecond)
+		//}
 	}
 
 	robot := gobot.NewRobot("bot",
