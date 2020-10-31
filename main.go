@@ -7,6 +7,7 @@ import (
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
+	"time"
 )
 
 // 12: left DC motor backward
@@ -37,6 +38,10 @@ func main() {
 		}
 
 		arm.Center()
+		for {
+			arm.Grab()
+			time.Sleep(time.Second)
+		}
 		//time.Sleep(time.Second)
 		//arm.Sweep()
 		//var lastDistanceFromObstacle float32
