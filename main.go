@@ -36,7 +36,7 @@ func main() {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
 
-		arm.Move()
+		arm.Center()
 		//var lastDistanceFromObstacle float32
 		//var lastDirection string
 		//var stuckCounter int
