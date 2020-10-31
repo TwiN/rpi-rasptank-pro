@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	LeftMotorForward   = "13"
-	LeftMotorBackward  = "12"
-	RightMotorForward  = "37"
-	RightMotorBackward = "40"
+	LeftMotorForwardPin   = "13"
+	LeftMotorBackwardPin  = "12"
+	RightMotorForwardPin  = "37"
+	RightMotorBackwardPin = "40"
 
 	DirectionForward  = "forward"
 	DirectionBackward = "backward"
@@ -27,15 +27,15 @@ type Vehicle struct {
 
 func NewVehicle(rpi *raspi.Adaptor) *Vehicle {
 	vehicle := &Vehicle{
-		LeftMotor:  gpio.NewMotorDriver(rpi, LeftMotorForward),
-		RightMotor: gpio.NewMotorDriver(rpi, RightMotorForward),
+		LeftMotor:  gpio.NewMotorDriver(rpi, LeftMotorForwardPin),
+		RightMotor: gpio.NewMotorDriver(rpi, RightMotorForwardPin),
 	}
 	vehicle.LeftMotor.SetName("left-motor")
-	vehicle.LeftMotor.ForwardPin = LeftMotorForward
-	vehicle.LeftMotor.BackwardPin = LeftMotorBackward
+	vehicle.LeftMotor.ForwardPin = LeftMotorForwardPin
+	vehicle.LeftMotor.BackwardPin = LeftMotorBackwardPin
 	vehicle.RightMotor.SetName("right-motor")
-	vehicle.RightMotor.ForwardPin = RightMotorForward
-	vehicle.RightMotor.BackwardPin = RightMotorBackward
+	vehicle.RightMotor.ForwardPin = RightMotorForwardPin
+	vehicle.RightMotor.BackwardPin = RightMotorBackwardPin
 	return vehicle
 }
 

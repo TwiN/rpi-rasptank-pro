@@ -1,15 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/drivers/gpio"
-	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
-	"time"
 )
 
 // 12: left DC motor backward
@@ -30,8 +27,8 @@ func main() {
 	rpi := raspi.NewAdaptor()
 	screen := display.NewDisplay(rpi)
 	vehicle := controller.NewVehicle(rpi)
+	arm := controller.NewArm(rpi)
 	//ultrasonicSensor := sensor.NewUltrasonicSensor()
-	servo := i2c.NewPCA9685Driver(rpi, i2c.WithBus(1), i2c.WithAddress(0x40))
 
 	led := gpio.NewLedDriver(rpi, "32")
 	work := func() {
@@ -39,16 +36,7 @@ func main() {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
 
-		err := servo.SetPWMFreq(50.0)
-		if err != nil {
-			fmt.Printf("failed to set PWM freq to 50.0: %s\n", err.Error())
-		}
-		gobot.Every(2*time.Second, func() {
-			err := servo.ServoWrite("1", 1)
-			if err != nil {
-				fmt.Println(err)
-			}
-		})
+		arm.Move()
 		//var lastDistanceFromObstacle float32
 		//var lastDirection string
 		//var stuckCounter int
@@ -105,7 +93,7 @@ func main() {
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, led, servo},
+		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, led, arm.Driver},
 		work,
 	)
 
