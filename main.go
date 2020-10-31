@@ -3,9 +3,13 @@ package main
 import (
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
+	ws281x "github.com/mcuadros/go-rpi-ws281x"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
+	"image"
+	"image/color"
+	"image/draw"
 	"log"
 	"time"
 )
@@ -14,6 +18,12 @@ import (
 // 13: right DC motor backward
 // 37: left DC motor backward
 // 40: left DC motor forward
+
+// 29: LED on HAT board
+// 31: LED on HAT board
+// 33: LED on HAT board
+
+// 32: LED on LEFT, BACK
 
 func main() {
 	rpi := raspi.NewAdaptor()
@@ -31,16 +41,24 @@ func main() {
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
 
-	led := gpio.NewRgbLedDriver(rpi, "1", "2", "3")
+	led := gpio.NewLedDriver(rpi, "32")
 	work := func() {
 		if err := screen.DisplayIP(); err != nil {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
 		gobot.Every(3*time.Second, func() {
-			err := led.Toggle()
-			if err != nil {
-				log.Println(err)
-			}
+			c, _ := ws281x.NewCanvas(8, 4, &ws281x.DefaultConfig)
+			c.Initialize()
+			draw.Draw(c, c.Bounds(), image.NewUniform(color.White), image.ZP, draw.Over)
+			c.Render()
+			time.Sleep(time.Second * 1)
+
+			// don't forget close the canvas, if not you leds may remain on
+			c.Close()
+			//err := led.Toggle()
+			//if err != nil {
+			//	log.Println(err)
+			//}
 			//engine.Right()
 		})
 	}
