@@ -15,11 +15,15 @@ const (
 
 	DirectionForward  = "forward"
 	DirectionBackward = "backward"
+	DirectionLeft     = "left"
+	DirectionRight    = "right"
 	DirectionNone     = "none"
 )
 
 type Vehicle struct {
 	LeftMotor, RightMotor *gpio.MotorDriver
+
+	LastDirection string
 }
 
 func NewVehicle(rpi *raspi.Adaptor) *Vehicle {
@@ -37,18 +41,22 @@ func NewVehicle(rpi *raspi.Adaptor) *Vehicle {
 }
 
 func (v *Vehicle) Forward() {
+	v.LastDirection = DirectionForward
 	v.move(DirectionForward, DirectionForward)
 }
 
 func (v *Vehicle) Backward() {
+	v.LastDirection = DirectionBackward
 	v.move(DirectionBackward, DirectionBackward)
 }
 
 func (v *Vehicle) Left() {
+	v.LastDirection = DirectionLeft
 	v.move(DirectionForward, DirectionBackward)
 }
 
 func (v *Vehicle) Right() {
+	v.LastDirection = DirectionRight
 	v.move(DirectionBackward, DirectionForward)
 }
 
