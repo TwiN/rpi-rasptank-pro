@@ -23,7 +23,7 @@ func CreateDriver(rpi *raspi.Adaptor) *i2c.SSD1306Driver {
 func DrawString(driver *i2c.SSD1306Driver, text string) error {
 	rectangle := image.Rect(0, 0, Width, Height)
 	img := image.NewRGBA(rectangle)
-	pixfont.DrawString(img, 0, 0, text, color.White)
+	pixfont.DrawString(img, 10, 10, text, color.White)
 	flipped := image.NewRGBA(rectangle)
 	for j := 0; j < img.Bounds().Dy(); j++ {
 		for i := 0; i < img.Bounds().Dx(); i++ {
