@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
@@ -66,4 +67,5 @@ func (v *Vehicle) move(leftMotorDirection, rightMotorDirection string) {
 		log.Printf("Stopping because failed to send direction to right motor: %s", err.Error())
 		v.Stop()
 	}
+	fmt.Printf("current speed: %d and %d\n", v.LeftMotor.CurrentSpeed, v.RightMotor.CurrentSpeed)
 }
