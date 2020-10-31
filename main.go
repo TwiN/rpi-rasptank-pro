@@ -30,8 +30,8 @@ func main() {
 	work := func() {
 		gobot.Every(3*time.Second, func() {
 			screen.Reset()
-			for x := 0; x < 100; x++ {
-				for y := 0; y < 100; y++ {
+			for x := 0; x < 30; x++ {
+				for y := 0; y < 30; y++ {
 					screen.Set(x, y, 100)
 				}
 			}
