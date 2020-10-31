@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"gobot.io/x/gobot"
-	"gobot.io/x/gobot/drivers/i2c"
+	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
 	"time"
@@ -30,41 +30,25 @@ func main() {
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
 
-	adaFruit := i2c.NewAdafruitMotorHatDriver(rpi, i2c.WithBus(1))
+	motor := gpio.NewMotorDriver(rpi, "40")
 	work := func() {
 		err := display.DrawString(screen, fmt.Sprintf("%s", GetLocalIP()))
 		if err != nil {
 			log.Printf("Failed to write on display: %s", err.Error())
 		}
 		gobot.Every(3*time.Second, func() {
-			//pca9685.SetPWMFreq(50)
-			//pca9685.SetPWM()
-			log.Println("o.o")
-			var speed int32 = 10 // 255 = full speed!
-			if err := adaFruit.SetDCMotorSpeed(2, speed); err != nil {
+			err := motor.On()
+			if err != nil {
 				log.Println(err)
 			}
-			if err := adaFruit.RunDCMotor(2, i2c.AdafruitForward); err != nil {
-				log.Println(err)
-			}
-			time.Sleep(100 * time.Millisecond)
-			if err := adaFruit.RunDCMotor(2, i2c.AdafruitRelease); err != nil {
-				log.Println(err)
-			}
-			time.Sleep(100 * time.Millisecond)
-			if err := adaFruit.RunDCMotor(2, i2c.AdafruitBackward); err != nil {
-				log.Println(err)
-			}
-			time.Sleep(100 * time.Millisecond)
-			if err := adaFruit.RunDCMotor(2, i2c.AdafruitRelease); err != nil {
-				log.Println(err)
-			}
+			time.Sleep(time.Second)
+			motor.Off()
 		})
 	}
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen, adaFruit},
+		[]gobot.Device{screen, motor},
 		work,
 	)
 
