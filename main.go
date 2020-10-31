@@ -15,13 +15,8 @@ import (
 // 40: left DC motor forward
 
 func main() {
-	GetLocalIP()
 	rpi := raspi.NewAdaptor()
 	screen := display.CreateDriver(rpi)
-	err := display.DrawString(screen, fmt.Sprintf("IP: %s", GetLocalIP()))
-	if err != nil {
-		log.Printf("Failed to write on display: %s", err.Error())
-	}
 	//led := gpio.NewLedDriver(rpi, os.Args[1])
 	//work := func() {
 	//	gobot.Every(3*time.Second, func() {
@@ -36,6 +31,10 @@ func main() {
 
 	//adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
 	work := func() {
+		err := display.DrawString(screen, fmt.Sprintf("IP: %s", GetLocalIP()))
+		if err != nil {
+			log.Printf("Failed to write on display: %s", err.Error())
+		}
 		gobot.Every(3*time.Second, func() {
 			//pca9685.SetPWMFreq(50)
 			//pca9685.SetPWM()
