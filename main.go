@@ -32,7 +32,7 @@ func main() {
 			screen.Reset()
 			for x := 1; x < 30; x++ {
 				for y := 1; y < 30; y++ {
-					screen.Set(x, y, 100)
+					screen.Set(x, y, 1)
 				}
 			}
 			time.Sleep(time.Second * 2)
