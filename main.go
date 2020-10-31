@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
-	"github.com/TwinProduction/rpi-rasptank-pro/motor"
 	"gobot.io/x/gobot"
+	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
 	"time"
@@ -17,7 +17,8 @@ import (
 
 func main() {
 	rpi := raspi.NewAdaptor()
-	screen := display.CreateDriver(rpi)
+	screen := display.NewDisplay(rpi)
+	engine := controller.NewEngine(rpi)
 	//led := gpio.NewLedDriver(rpi, os.Args[1])
 	//work := func() {
 	//	gobot.Every(3*time.Second, func() {
@@ -29,20 +30,24 @@ func main() {
 	//	})
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
-	motors := motor.NewMotors(rpi)
+
+	led := gpio.NewRgbLedDriver(rpi, "1", "2", "3")
 	work := func() {
-		err := display.DrawString(screen, fmt.Sprintf("%s", GetLocalIP()))
-		if err != nil {
-			log.Printf("Failed to write on display: %s", err.Error())
+		if err := screen.DisplayIP(); err != nil {
+			log.Printf("Failed to write on screen: %s", err.Error())
 		}
-		gobot.Every(1*time.Second, func() {
-			motors.Right()
+		gobot.Every(3*time.Second, func() {
+			err := led.Toggle()
+			if err != nil {
+				log.Println(err)
+			}
+			//engine.Right()
 		})
 	}
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen, motors.LeftMotor, motors.RightMotor},
+		[]gobot.Device{screen.Driver, engine.LeftMotor, engine.RightMotor, led},
 		work,
 	)
 

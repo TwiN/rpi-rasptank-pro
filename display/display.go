@@ -1,11 +1,13 @@
 package display
 
 import (
+	"github.com/TwinProduction/rpi-rasptank-pro/util"
 	"github.com/pbnjay/pixfont"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
 	"image"
 	"image/color"
+	"log"
 	"strings"
 )
 
@@ -17,11 +19,25 @@ const (
 	Address = 0x3c
 )
 
-func CreateDriver(rpi *raspi.Adaptor) *i2c.SSD1306Driver {
-	return i2c.NewSSD1306Driver(rpi, i2c.WithBus(Bus), i2c.WithAddress(Address))
+type Display struct {
+	Driver *i2c.SSD1306Driver
 }
 
-func DrawString(driver *i2c.SSD1306Driver, text string) error {
+func NewDisplay(rpi *raspi.Adaptor) *Display {
+	return &Display{
+		Driver: i2c.NewSSD1306Driver(rpi, i2c.WithBus(Bus), i2c.WithAddress(Address)),
+	}
+}
+
+func (d *Display) DisplayIP() error {
+	err := d.DrawString(util.GetLocalIP())
+	if err != nil {
+		log.Printf("Failed to write on display: %s", err.Error())
+	}
+	return err
+}
+
+func (d *Display) DrawString(text string) error {
 	rectangle := image.Rect(0, 0, Width, Height)
 	img := image.NewRGBA(rectangle)
 	lines := strings.Split(text, "\n")
@@ -34,9 +50,9 @@ func DrawString(driver *i2c.SSD1306Driver, text string) error {
 			flipped.Set(Width-i, Height-j, img.At(i, j))
 		}
 	}
-	driver.Clear()
-	if err := driver.ShowImage(flipped); err != nil {
+	d.Driver.Clear()
+	if err := d.Driver.ShowImage(flipped); err != nil {
 		return err
 	}
-	return driver.Display()
+	return d.Driver.Display()
 }
