@@ -31,11 +31,11 @@ func main() {
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
 
 	leftMotor := gpio.NewMotorDriver(rpi, "40")
-	leftMotor.ForwardPin = "40"
-	leftMotor.BackwardPin = "37"
+	//leftMotor.ForwardPin = "40"
+	//leftMotor.BackwardPin = "37"
 	rightMotor := gpio.NewMotorDriver(rpi, "12")
-	rightMotor.ForwardPin = "12"
-	rightMotor.BackwardPin = "13"
+	//rightMotor.ForwardPin = "12"
+	//rightMotor.BackwardPin = "13"
 	work := func() {
 		err := display.DrawString(screen, fmt.Sprintf("%s", GetLocalIP()))
 		if err != nil {
@@ -51,8 +51,8 @@ func main() {
 			time.Sleep(100 * time.Millisecond)
 			leftMotor.Off()
 			rightMotor.Off()
-			leftMotor.Direction("backward")
-			rightMotor.Direction("backward")
+			leftMotor.SpeedPin = "13"
+			rightMotor.SpeedPin = "37"
 			if err := leftMotor.On(); err != nil {
 				log.Println(err)
 			}
@@ -62,8 +62,8 @@ func main() {
 			time.Sleep(100 * time.Millisecond)
 			leftMotor.Off()
 			rightMotor.Off()
-			leftMotor.Direction("forward")
-			rightMotor.Direction("forward")
+			leftMotor.SpeedPin = "12"
+			rightMotor.SpeedPin = "40"
 		})
 	}
 
