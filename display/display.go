@@ -26,7 +26,7 @@ func DrawString(driver *i2c.SSD1306Driver, text string) error {
 	img := image.NewRGBA(rectangle)
 	lines := strings.Split(text, "\n")
 	for number, line := range lines {
-		pixfont.DrawString(img, number*10, number*10, line, color.White)
+		pixfont.DrawString(img, 10+(number*10), 10+(number*10), line, color.White)
 	}
 	flipped := image.NewRGBA(rectangle)
 	for j := 0; j < img.Bounds().Dy(); j++ {
