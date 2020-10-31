@@ -3,6 +3,7 @@ package motor
 import (
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
+	"log"
 )
 
 const (
@@ -13,6 +14,7 @@ const (
 
 	DirectionForward  = "forward"
 	DirectionBackward = "backward"
+	DirectionNone     = "none"
 )
 
 type Motors struct {
@@ -34,26 +36,34 @@ func NewMotors(rpi *raspi.Adaptor) *Motors {
 }
 
 func (m *Motors) Forward() {
-	m.LeftMotor.Direction(DirectionForward)
-	m.RightMotor.Direction(DirectionForward)
+	m.move(DirectionForward, DirectionForward)
 }
 
 func (m *Motors) Backward() {
-	m.LeftMotor.Direction(DirectionBackward)
-	m.RightMotor.Direction(DirectionBackward)
+	m.move(DirectionBackward, DirectionBackward)
 }
 
 func (m *Motors) Left() {
-	m.LeftMotor.Direction(DirectionBackward)
-	m.RightMotor.Direction(DirectionForward)
+	m.move(DirectionForward, DirectionBackward)
 }
 
 func (m *Motors) Right() {
-	m.LeftMotor.Direction(DirectionBackward)
-	m.RightMotor.Direction(DirectionForward)
+	m.move(DirectionBackward, DirectionForward)
 }
 
 func (m *Motors) Stop() {
-	m.LeftMotor.Direction(DirectionBackward)
-	m.RightMotor.Direction(DirectionForward)
+	//m.move(DirectionNone, DirectionNone)
+	m.LeftMotor.Off()
+	m.RightMotor.Off()
+}
+
+func (m *Motors) move(leftMotorDirection, rightMotorDirection string) {
+	if err := m.LeftMotor.Direction(leftMotorDirection); err != nil {
+		log.Printf("Stopping because failed to send direction to left motor: %s", err.Error())
+		m.Stop()
+	}
+	if err := m.RightMotor.Direction(rightMotorDirection); err != nil {
+		log.Printf("Stopping because failed to send direction to right motor: %s", err.Error())
+		m.Stop()
+	}
 }
