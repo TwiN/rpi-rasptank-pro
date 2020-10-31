@@ -25,11 +25,11 @@ func main() {
 	//	})
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
-	screen := i2c.NewSSD1306Driver(rpi)
+	screen := i2c.NewSSD1306Driver(rpi, i2c.WithBus(1))
 	//adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
 	work := func() {
 		gobot.Every(3*time.Second, func() {
-			screen.Reset()
+			screen.Clear()
 			for x := 1; x < 30; x++ {
 				for y := 1; y < 30; y++ {
 					screen.Set(x, y, 1)
