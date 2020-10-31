@@ -41,10 +41,10 @@ func main() {
 		if err != nil {
 			log.Printf("Failed to write on display: %s", err.Error())
 		}
-		gobot.Every(3*time.Second, func() {
-			leftMotor.Forward(50)
-			time.Sleep(500 * time.Millisecond)
-			leftMotor.Backward(50)
+		gobot.Every(1*time.Second, func() {
+			leftMotor.Toggle()
+			rightMotor.Toggle()
+			fmt.Println(leftMotor.CurrentDirection)
 		})
 	}
 
