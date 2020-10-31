@@ -6,6 +6,7 @@ import (
 	"gobot.io/x/gobot/platforms/raspi"
 	"image"
 	"image/color"
+	"strings"
 )
 
 const (
@@ -23,7 +24,10 @@ func CreateDriver(rpi *raspi.Adaptor) *i2c.SSD1306Driver {
 func DrawString(driver *i2c.SSD1306Driver, text string) error {
 	rectangle := image.Rect(0, 0, Width, Height)
 	img := image.NewRGBA(rectangle)
-	pixfont.DrawString(img, 10, 10, text, color.White)
+	lines := strings.Split(text, "\n")
+	for number, line := range lines {
+		pixfont.DrawString(img, number*10, number*10, line, color.White)
+	}
 	flipped := image.NewRGBA(rectangle)
 	for j := 0; j < img.Bounds().Dy(); j++ {
 		for i := 0; i < img.Bounds().Dx(); i++ {

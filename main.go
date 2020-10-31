@@ -31,7 +31,7 @@ func main() {
 
 	//adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
 	work := func() {
-		err := display.DrawString(screen, fmt.Sprintf("%s", GetLocalIP()))
+		err := display.DrawString(screen, fmt.Sprintf("IP:\n%s", GetLocalIP()))
 		if err != nil {
 			log.Printf("Failed to write on display: %s", err.Error())
 		}
