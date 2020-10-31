@@ -55,7 +55,7 @@ func (a *Arm) Center() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
-	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, 90); err != nil {
+	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, 80); err != nil {
 		fmt.Println(err)
 	}
 	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 90); err != nil {
@@ -85,11 +85,10 @@ func (a *Arm) Sweep() {
 	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 120); err != nil {
 		fmt.Println(err)
 	}
-	for i := 50; i > 130; i += 10 {
-		if err := a.Driver.ServoWrite(BaseVerticalServoPin, byte(i)); err != nil {
+	for i := 50; i < 130; i++ {
+		if err := a.Driver.ServoWrite(BaseHorizontalServoPin, byte(i)); err != nil {
 			fmt.Println(err)
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
-	a.Driver.SetAllPWM(0, 0)
 }
