@@ -68,17 +68,17 @@ func main() {
 					// If the distance was 0, there's probably something blocking the sensor, so we'll just turn
 					log.Println("going right")
 					vehicle.Right()
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(200 * time.Millisecond)
 					vehicle.Stop()
 				} else if distanceFromObstacle < 3 {
 					log.Println("going backward")
 					vehicle.Backward()
-					time.Sleep(250 * time.Millisecond)
+					time.Sleep(500 * time.Millisecond)
 					vehicle.Stop()
 				} else if distanceFromObstacle < 20 {
 					log.Println("going left")
 					vehicle.Left()
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(200 * time.Millisecond)
 					vehicle.Stop()
 				} else {
 					log.Println("going forward")
