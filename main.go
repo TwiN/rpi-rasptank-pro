@@ -6,6 +6,7 @@ import (
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/drivers/gpio"
+	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
 	"time"
@@ -30,7 +31,7 @@ func main() {
 	screen := display.NewDisplay(rpi)
 	vehicle := controller.NewVehicle(rpi)
 	//ultrasonicSensor := sensor.NewUltrasonicSensor()
-	servo := gpio.NewServoDriver(rpi, "1")
+	servo := i2c.NewPCA9685Driver(rpi, i2c.WithBus(1), i2c.WithAddress(0x40))
 
 	led := gpio.NewLedDriver(rpi, "32")
 	work := func() {
@@ -38,13 +39,15 @@ func main() {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
 
-		gobot.Every(3*time.Second, func() {
-			err := servo.Center()
+		err := servo.SetPWMFreq(50.0)
+		if err != nil {
+			fmt.Printf("failed to set PWM freq to 50.0: %s\n", err.Error())
+		}
+		gobot.Every(2*time.Second, func() {
+			err := servo.ServoWrite("1", 1)
 			if err != nil {
 				fmt.Println(err)
 			}
-			time.Sleep(500 * time.Millisecond)
-			servo.Move(10)
 		})
 		//var lastDistanceFromObstacle float32
 		//var lastDirection string
