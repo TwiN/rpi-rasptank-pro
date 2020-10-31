@@ -33,7 +33,7 @@ func main() {
 	work := func() {
 		gobot.Every(3*time.Second, func() {
 			screen.Reset()
-			img := image.NewRGBA(image.Rect(0, 0, 150, 30))
+			img := image.NewRGBA(image.Rect(0, 0, 128, 64))
 			pixfont.DrawString(img, 0, 0, "hello", color.White)
 			screen.ShowImage(img)
 			//screen.Display()
