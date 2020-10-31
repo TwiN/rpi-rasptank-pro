@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"gobot.io/x/gobot"
@@ -38,7 +39,10 @@ func main() {
 		}
 
 		gobot.Every(3*time.Second, func() {
-			servo.Center()
+			err := servo.Center()
+			if err != nil {
+				fmt.Println(err)
+			}
 			time.Sleep(500 * time.Millisecond)
 			servo.Move(10)
 		})
