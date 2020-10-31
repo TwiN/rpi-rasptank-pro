@@ -54,9 +54,15 @@ func (us *UltrasonicSensor) MeasureDistance() float32 {
 
 	var start, end time.Time
 	for i := 0; i < Limit && us.echoPin.Read() != rpio.High; i++ {
+		if i+2 == Limit {
+			fmt.Println("WILL HIT THE LIMIT (High)")
+		}
 	}
 	start = time.Now()
 	for i := 0; i < Limit && us.echoPin.Read() != rpio.Low; i++ {
+		if i+2 == Limit {
+			fmt.Println("WILL HIT THE LIMIT (Low)")
+		}
 		// We're waiting for 1μs between every iteration in case the number of iterations hits the Limit.
 		// Based on the hardware used, this limit could be reached extremely fast, which means that as a
 		// result, the distance calculated could show something pretty close when it isn't.
