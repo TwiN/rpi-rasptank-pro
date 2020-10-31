@@ -27,11 +27,12 @@ type UltrasonicSensor struct {
 
 // NewUltrasonicSensor creates a new UltrasonicSensor
 func NewUltrasonicSensor() *UltrasonicSensor {
-	start := time.Now()
+	// Try to open  , panic, but if not, when we at least get some measure of guarantee
+	// that later on when this needs to opened, rpio won't panic
 	if err := rpio.Open(); err != nil {
 		panic(fmt.Errorf("unable to open rpio: %s", err.Error()))
 	}
-	fmt.Printf("opening rpio took %dns\n", time.Since(start).Nanoseconds())
+	rpio.Close()
 	return &UltrasonicSensor{
 		triggerPin: rpio.Pin(TriggerPin),
 		echoPin:    rpio.Pin(EchoPin),
@@ -41,6 +42,8 @@ func NewUltrasonicSensor() *UltrasonicSensor {
 // MeasureDistance measures the distance by sending a high powered ultrasonic sound wave, waiting for its return
 // on the echo pin, and using the time taken to calculate the distance.
 func (us *UltrasonicSensor) MeasureDistance() float32 {
+	_ = rpio.Open()
+	defer rpio.Close()
 	// Set echo pin as INPUT and trigger pin as OUTPUT
 	us.echoPin.Input()
 	us.triggerPin.Output()
@@ -60,10 +63,10 @@ func (us *UltrasonicSensor) MeasureDistance() float32 {
 	}
 	start = time.Now()
 	for i := 0; i < Limit && us.echoPin.Read() != rpio.Low; i++ {
-		if i+2 == Limit {
+		if i+100 == Limit {
 			fmt.Println("WILL HIT THE LIMIT (Low)")
 		}
-		// We're waiting for 1μs between every iteration in case the number of iterations hits the Limit.
+		// We're waiting for 1ns between every iteration in case the number of iterations hits the Limit.
 		// Based on the hardware used, this limit could be reached extremely fast, which means that as a
 		// result, the distance calculated could show something pretty close when it isn't.
 		// If having a potentially slightly higher than desirable distance measured is a problem for you,
