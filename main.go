@@ -48,7 +48,7 @@ func main() {
 			if err := rightMotor.On(); err != nil {
 				log.Println(err)
 			}
-			time.Sleep(25 * time.Millisecond)
+			time.Sleep(100 * time.Millisecond)
 			leftMotor.Off()
 			rightMotor.Off()
 			leftMotor.Direction("backward")
@@ -59,7 +59,7 @@ func main() {
 			if err := rightMotor.On(); err != nil {
 				log.Println(err)
 			}
-			time.Sleep(25 * time.Millisecond)
+			time.Sleep(100 * time.Millisecond)
 			leftMotor.Off()
 			rightMotor.Off()
 			leftMotor.Direction("forward")
