@@ -42,8 +42,13 @@ func main() {
 			log.Printf("Failed to write on display: %s", err.Error())
 		}
 		gobot.Every(1*time.Second, func() {
-			leftMotor.Toggle()
-			rightMotor.Toggle()
+			if leftMotor.CurrentDirection == "forward" {
+				leftMotor.Direction("backward")
+				rightMotor.Direction("backward")
+			} else {
+				leftMotor.Direction("forward")
+				rightMotor.Direction("forward")
+			}
 			fmt.Println(leftMotor.CurrentDirection)
 		})
 	}
