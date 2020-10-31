@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
+	"github.com/jdevelop/golang-rpi-extras/sensor_hcsr04"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
@@ -21,17 +22,22 @@ import (
 
 // 32: LED on LEFT, BACK
 
+// 11: Ultrasonic Trigger
+// 8: Ultrasonic Echo
+
 func main() {
 	rpi := raspi.NewAdaptor()
 	screen := display.NewDisplay(rpi)
 	engine := controller.NewEngine(rpi)
 
 	led := gpio.NewLedDriver(rpi, "32")
+	ultrasonicSensor := sensor_hcsr04.NewHCSR04(8, 11)
 	work := func() {
 		if err := screen.DisplayIP(); err != nil {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
 		gobot.Every(3*time.Second, func() {
+			println(ultrasonicSensor.MeasureDistance())
 			//engine.Right()
 		})
 	}
