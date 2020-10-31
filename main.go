@@ -39,34 +39,51 @@ func main() {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
 		var lastDistanceFromObstacle float32
+		var stuckCounter int
 		gobot.Every(1*time.Second, func() {
 			distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
+			log.Printf("distance from obstacle: %f", distanceFromObstacle)
 			if math.Round(float64(lastDistanceFromObstacle)) == math.Round(float64(distanceFromObstacle)) {
 				fmt.Println("doesn't look like you moved much..")
-			}
-			log.Printf("distance from obstacle: %f", distanceFromObstacle)
-			if distanceFromObstacle == 0 {
-				// If the distance was 0, there's probably something blocking the sensor, so we'll just turn
+				stuckCounter++
 				log.Println("going right")
-				vehicle.Right()
-				time.Sleep(100 * time.Millisecond)
-				vehicle.Stop()
-			} else if distanceFromObstacle < 3 {
-				log.Println("going backward")
-				vehicle.Backward()
-				time.Sleep(250 * time.Millisecond)
-				vehicle.Stop()
-			} else if distanceFromObstacle < 35 {
-				log.Println("going left")
-				vehicle.Left()
-				time.Sleep(100 * time.Millisecond)
+				if stuckCounter%2 == 0 {
+					vehicle.Right()
+				} else {
+					vehicle.Backward()
+				}
+				msToSleep := stuckCounter * 50
+				if msToSleep > 1000 {
+					msToSleep = 1000
+				}
+				time.Sleep(time.Duration(msToSleep) * time.Millisecond)
 				vehicle.Stop()
 			} else {
-				log.Println("going forward")
-				vehicle.Forward()
-				time.Sleep(500 * time.Millisecond)
-				vehicle.Stop()
+				stuckCounter = 0
+				if distanceFromObstacle == 0 {
+					// If the distance was 0, there's probably something blocking the sensor, so we'll just turn
+					log.Println("going right")
+					vehicle.Right()
+					time.Sleep(100 * time.Millisecond)
+					vehicle.Stop()
+				} else if distanceFromObstacle < 3 {
+					log.Println("going backward")
+					vehicle.Backward()
+					time.Sleep(250 * time.Millisecond)
+					vehicle.Stop()
+				} else if distanceFromObstacle < 35 {
+					log.Println("going left")
+					vehicle.Left()
+					time.Sleep(100 * time.Millisecond)
+					vehicle.Stop()
+				} else {
+					log.Println("going forward")
+					vehicle.Forward()
+					time.Sleep(500 * time.Millisecond)
+					vehicle.Stop()
+				}
 			}
+
 			lastDistanceFromObstacle = distanceFromObstacle
 		})
 	}
