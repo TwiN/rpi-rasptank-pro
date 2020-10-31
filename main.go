@@ -64,7 +64,7 @@ func main() {
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen},
+		[]gobot.Device{screen, adaFruit},
 		work,
 	)
 
