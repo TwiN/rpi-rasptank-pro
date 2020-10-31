@@ -76,8 +76,8 @@ func main() {
 					time.Sleep(500 * time.Millisecond)
 					vehicle.Stop()
 				} else if distanceFromObstacle < 20 {
-					log.Println("going left")
-					vehicle.Left()
+					log.Println("going righttttttt")
+					vehicle.Right()
 					time.Sleep(300 * time.Millisecond)
 					vehicle.Stop()
 				} else {
