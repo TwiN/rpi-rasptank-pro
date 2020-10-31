@@ -85,10 +85,11 @@ func (a *Arm) Sweep() {
 	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 120); err != nil {
 		fmt.Println(err)
 	}
-	for i := 10; i > 170; i++ {
+	for i := 50; i > 130; i += 10 {
 		if err := a.Driver.ServoWrite(BaseVerticalServoPin, byte(i)); err != nil {
 			fmt.Println(err)
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
+	a.Driver.SetAllPWM(0, 0)
 }
