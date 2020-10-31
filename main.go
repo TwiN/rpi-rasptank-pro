@@ -32,7 +32,7 @@ func main() {
 			screen.Reset()
 			for x := 1; x < 20; x++ {
 				for y := 1; y < 20; y++ {
-					screen.Set(x, y, 0)
+					screen.Set(x, y, 1)
 				}
 			}
 			screen.Display()
