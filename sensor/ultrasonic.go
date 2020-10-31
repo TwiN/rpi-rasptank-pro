@@ -68,7 +68,7 @@ func (us *UltrasonicSensor) MeasureDistance() float32 {
 		// result, the distance calculated could show something pretty close when it isn't.
 		// If having a potentially slightly higher than desirable distance measured is a problem for you,
 		// have a look at MeasureDistanceReliably
-		time.Sleep(time.Microsecond)
+		time.Sleep(time.Nanosecond)
 	}
 	end = time.Now()
 	return (float32(end.UnixNano()-start.UnixNano()) * (SpeedOfSoundInCentimetersPerSecond / 2)) / float32(time.Second)

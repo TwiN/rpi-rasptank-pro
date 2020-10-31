@@ -36,7 +36,7 @@ func main() {
 		if err := screen.DisplayIP(); err != nil {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
-		gobot.Every(3*time.Second, func() {
+		gobot.Every(1*time.Second, func() {
 			log.Printf("%f", ultrasonicSensor.MeasureDistance())
 			//engine.Right()
 		})
