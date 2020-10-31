@@ -3,7 +3,7 @@ package main
 import (
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/drivers/i2c"
-	"gobot.io/x/gobot/platforms/firmata"
+	"gobot.io/x/gobot/platforms/raspi"
 	"time"
 )
 
@@ -13,7 +13,7 @@ import (
 // 40: left DC motor forward
 
 func main() {
-	rpi := firmata.NewAdaptor()
+	rpi := raspi.NewAdaptor()
 	//led := gpio.NewLedDriver(rpi, os.Args[1])
 	//work := func() {
 	//	gobot.Every(3*time.Second, func() {
@@ -25,7 +25,7 @@ func main() {
 	//	})
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
-	screen := i2c.NewSSD1306Driver(rpi, i2c.WithBus(1), i2c.WithAddress(0x3C))
+	screen := i2c.NewSSD1306Driver(rpi, i2c.WithBus(1), i2c.WithAddress(0x3c))
 	//adaFruit := i2c.NewAdafruitMotorHatDriver(rpi)
 	work := func() {
 		gobot.Every(3*time.Second, func() {
@@ -35,6 +35,7 @@ func main() {
 					screen.Set(x, y, 0)
 				}
 			}
+			screen.Display()
 			time.Sleep(time.Second * 2)
 			//pca9685.SetPWMFreq(50)
 			//pca9685.SetPWM()
