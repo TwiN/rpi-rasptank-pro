@@ -11,10 +11,10 @@ import (
 	"time"
 )
 
-// 12: right DC motor forward
-// 13: right DC motor backward
-// 37: left DC motor backward
-// 40: left DC motor forward
+// 12: right DC motor backward
+// 13: right DC motor forward
+// 37: left DC motor forward
+// 40: left DC motor backward
 
 // 29: LED on HAT board
 // 31: LED on HAT board
@@ -39,7 +39,7 @@ func main() {
 		gobot.Every(1*time.Second, func() {
 			distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
 			log.Printf("distance from obstacle: %f", distanceFromObstacle)
-			if distanceFromObstacle < 20 {
+			if distanceFromObstacle < 5 {
 				log.Println("going backward")
 				vehicle.Backward()
 				time.Sleep(400 * time.Millisecond)
@@ -47,7 +47,7 @@ func main() {
 			} else if distanceFromObstacle < 35 {
 				log.Println("going right")
 				vehicle.Right()
-				time.Sleep(200 * time.Millisecond)
+				time.Sleep(150 * time.Millisecond)
 				vehicle.Stop()
 			} else {
 				log.Println("going forward")
