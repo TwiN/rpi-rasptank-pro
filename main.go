@@ -30,25 +30,45 @@ func main() {
 	//}
 	//pca9685 := i2c.NewPCA9685Driver(rpi)
 
-	motor := gpio.NewMotorDriver(rpi, "40")
+	leftMotor := gpio.NewMotorDriver(rpi, "40")
+	leftMotor.BackwardPin = "37"
+	rightMotor := gpio.NewMotorDriver(rpi, "12")
+	rightMotor.BackwardPin = "13"
 	work := func() {
 		err := display.DrawString(screen, fmt.Sprintf("%s", GetLocalIP()))
 		if err != nil {
 			log.Printf("Failed to write on display: %s", err.Error())
 		}
 		gobot.Every(3*time.Second, func() {
-			err := motor.On()
-			if err != nil {
+			if err := leftMotor.On(); err != nil {
 				log.Println(err)
 			}
-			time.Sleep(time.Second)
-			motor.Off()
+			if err := rightMotor.On(); err != nil {
+				log.Println(err)
+			}
+			time.Sleep(100 * time.Millisecond)
+			leftMotor.Off()
+			rightMotor.Off()
+			time.Sleep(100 * time.Millisecond)
+			leftMotor.Direction("backward")
+			rightMotor.Direction("backward")
+			if err := leftMotor.On(); err != nil {
+				log.Println(err)
+			}
+			if err := rightMotor.On(); err != nil {
+				log.Println(err)
+			}
+			time.Sleep(100 * time.Millisecond)
+			leftMotor.Off()
+			rightMotor.Off()
+			leftMotor.Direction("forward")
+			rightMotor.Direction("forward")
 		})
 	}
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen, motor},
+		[]gobot.Device{screen, leftMotor},
 		work,
 	)
 
