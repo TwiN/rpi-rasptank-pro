@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"github.com/TwinProduction/rpi-rasptank-pro/sensor"
@@ -8,13 +9,14 @@ import (
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
+	"math"
 	"time"
 )
 
-// 12: right DC motor backward
-// 13: right DC motor forward
-// 37: left DC motor forward
-// 40: left DC motor backward
+// 12: left DC motor backward
+// 13: left DC motor forward
+// 37: right DC motor forward
+// 40: right DC motor backward
 
 // 29: LED on HAT board
 // 31: LED on HAT board
@@ -36,8 +38,12 @@ func main() {
 		if err := screen.DisplayIP(); err != nil {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
+		var lastDistanceFromObstacle float32
 		gobot.Every(1*time.Second, func() {
 			distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
+			if math.Round(float64(lastDistanceFromObstacle)) == math.Round(float64(distanceFromObstacle)) {
+				fmt.Println("doesn't look like you moved much..")
+			}
 			log.Printf("distance from obstacle: %f", distanceFromObstacle)
 			if distanceFromObstacle == 0 {
 				// If the distance was 0, there's probably something blocking the sensor, so we'll just turn
@@ -61,6 +67,7 @@ func main() {
 				time.Sleep(500 * time.Millisecond)
 				vehicle.Stop()
 			}
+			lastDistanceFromObstacle = distanceFromObstacle
 		})
 	}
 
