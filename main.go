@@ -1,9 +1,12 @@
 package main
 
 import (
+	"github.com/pbnjay/pixfont"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
+	"image"
+	"image/color"
 	"time"
 )
 
@@ -30,12 +33,10 @@ func main() {
 	work := func() {
 		gobot.Every(3*time.Second, func() {
 			screen.Reset()
-			for x := 1; x < 20; x++ {
-				for y := 1; y < 20; y++ {
-					screen.Set(x, y, 1)
-				}
-			}
-			screen.Display()
+			img := image.NewRGBA(image.Rect(0, 0, 150, 30))
+			pixfont.DrawString(img, 0, 0, "hello", color.White)
+			screen.ShowImage(img)
+			//screen.Display()
 			time.Sleep(time.Second * 2)
 			//pca9685.SetPWMFreq(50)
 			//pca9685.SetPWM()

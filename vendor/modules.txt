@@ -1,16 +1,3 @@
-# github.com/creack/goselect v0.1.0
-github.com/creack/goselect
-# github.com/go-ble/ble v0.0.0-20190521171521-147700f13610
-github.com/go-ble/ble
-github.com/go-ble/ble/darwin
-github.com/go-ble/ble/linux
-github.com/go-ble/ble/linux/adv
-github.com/go-ble/ble/linux/att
-github.com/go-ble/ble/linux/gatt
-github.com/go-ble/ble/linux/hci
-github.com/go-ble/ble/linux/hci/cmd
-github.com/go-ble/ble/linux/hci/evt
-github.com/go-ble/ble/linux/hci/socket
 # github.com/gobuffalo/uuid v2.0.5+incompatible
 github.com/gobuffalo/uuid
 # github.com/gofrs/uuid v3.2.0+incompatible
@@ -19,39 +6,23 @@ github.com/gofrs/uuid
 github.com/hashicorp/errwrap
 # github.com/hashicorp/go-multierror v1.0.0
 github.com/hashicorp/go-multierror
-# github.com/mattn/go-colorable v0.1.4
-github.com/mattn/go-colorable
-# github.com/mattn/go-isatty v0.0.9
-github.com/mattn/go-isatty
-# github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
-github.com/mgutz/ansi
-# github.com/mgutz/logxi v0.0.0-20161027140823-aebf8a7d67ab
-github.com/mgutz/logxi/v1
+# github.com/pbnjay/pixfont v0.0.0-20200714042608-33b744692567
+## explicit
+github.com/pbnjay/pixfont
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
-# github.com/raff/goble v0.0.0-20190909174656-72afc67d6a99
-github.com/raff/goble/xpc
 # github.com/sigurn/crc8 v0.0.0-20160107002456-e55481d6f45c
 github.com/sigurn/crc8
 # github.com/sigurn/utils v0.0.0-20190728110027-e1fefb11a144
 github.com/sigurn/utils
-# go.bug.st/serial.v1 v0.0.0-20180827123349-5f7892a7bb45
-go.bug.st/serial.v1
-go.bug.st/serial.v1/unixutils
 # gobot.io/x/gobot v1.14.0
 ## explicit
 gobot.io/x/gobot
 gobot.io/x/gobot/drivers/gpio
 gobot.io/x/gobot/drivers/i2c
 gobot.io/x/gobot/drivers/spi
-gobot.io/x/gobot/platforms/ble
-gobot.io/x/gobot/platforms/firmata
-gobot.io/x/gobot/platforms/firmata/client
 gobot.io/x/gobot/platforms/raspi
 gobot.io/x/gobot/sysfs
-# golang.org/x/sys v0.0.0-20191001151750-bb3f8db39f24
-golang.org/x/sys/unix
-golang.org/x/sys/windows
 # periph.io/x/periph v3.6.2+incompatible
 periph.io/x/periph
 periph.io/x/periph/conn
