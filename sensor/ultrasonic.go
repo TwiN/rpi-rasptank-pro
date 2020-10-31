@@ -45,11 +45,9 @@ func (us *UltrasonicSensor) MeasureDistance() float32 {
 
 	var start, end time.Time
 	for i := 0; i < Limit && us.echoPin.Read() != rpio.High; i++ {
-		time.Sleep(time.Nanosecond)
 	}
 	start = time.Now()
 	for i := 0; i < Limit && us.echoPin.Read() != rpio.Low; i++ {
-		time.Sleep(time.Nanosecond)
 	}
 	end = time.Now()
 	return (float32(end.UnixNano()-start.UnixNano()) * (SpeedOfSoundInCentimetersPerSecond / 2)) / float32(time.Second)
