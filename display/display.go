@@ -1,13 +1,13 @@
 package display
 
 import (
+	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/util"
 	"github.com/pbnjay/pixfont"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
 	"image"
 	"image/color"
-	"log"
 	"strings"
 )
 
@@ -30,11 +30,11 @@ func NewDisplay(rpi *raspi.Adaptor) *Display {
 }
 
 func (d *Display) DisplayIP() error {
-	err := d.DrawString(util.GetLocalIP())
-	if err != nil {
-		log.Printf("Failed to write on display: %s", err.Error())
-	}
-	return err
+	return d.DrawString(util.GetLocalIP())
+}
+
+func (d *Display) DisplayIPAndText(text string) error {
+	return d.DrawString(fmt.Sprintf("%s\n%s", util.GetLocalIP(), text))
 }
 
 func (d *Display) DrawString(text string) error {
