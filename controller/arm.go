@@ -51,7 +51,6 @@ func (a *Arm) Center() {
 }
 
 func (a *Arm) Grab() {
-	//a.Driver.SetAllPWM(0, 3000)
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
@@ -95,11 +94,11 @@ func (a *Arm) StraightUp() {
 }
 
 func (a *Arm) PushUpLeft() {
-	a.pushUp(0)
+	a.pushUp(150)
 }
 
 func (a *Arm) PushUpRight() {
-	a.pushUp(150)
+	a.pushUp(0)
 }
 
 func (a *Arm) pushUp(baseHorizontalServoAngle byte) {
