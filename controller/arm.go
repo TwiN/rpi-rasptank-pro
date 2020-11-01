@@ -33,19 +33,19 @@ func (a *Arm) Center() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
-	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, 70); err != nil {
+	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, 35); err != nil {
 		fmt.Println(err)
 	}
 	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 90); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(ClawServoPin, 45); err != nil {
+	if err := a.Driver.ServoWrite(ClawServoPin, 85); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 90); err != nil {
+	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 70); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(CameraVerticalServoPin, 90); err != nil {
+	if err := a.Driver.ServoWrite(CameraVerticalServoPin, 70); err != nil {
 		fmt.Println(err)
 	}
 }
