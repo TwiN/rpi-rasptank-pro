@@ -60,6 +60,15 @@ func (a *Arm) Grab() {
 	}
 }
 
+func (a *Arm) Release() {
+	if err := a.Driver.SetPWMFreq(50.0); err != nil {
+		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
+	}
+	if err := a.Driver.ServoWrite(ClawServoPin, byte(70)); err != nil {
+		fmt.Println(err)
+	}
+}
+
 func (a *Arm) Sweep() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
