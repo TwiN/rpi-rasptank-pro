@@ -56,7 +56,7 @@ func main() {
 				distanceFromObstacle = ultrasonicSensor.MeasureDistanceReliably()
 				log.Println("Trying to measure distance again")
 			}
-			if err := screen.DisplayIPAndText(fmt.Sprintf("%.0f", distanceFromObstacle)); err != nil {
+			if err := screen.DisplayIPAndText(fmt.Sprintf("\nus: %.0fcm", distanceFromObstacle)); err != nil {
 				log.Printf("Failed to write on screen: %s", err.Error())
 			}
 			//if distanceFromObstacle == sensor.InvalidMeasurement {
