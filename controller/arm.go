@@ -33,7 +33,7 @@ func (a *Arm) Center() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
-	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, 35); err != nil {
+	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, 75); err != nil {
 		fmt.Println(err)
 	}
 	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 90); err != nil {
