@@ -31,6 +31,7 @@ func main() {
 	screen := display.NewDisplay(rpi)
 	vehicle := controller.NewVehicle(rpi)
 	arm := controller.NewArm(rpi)
+	mpu6050 := sensor.NewMPU6050GyroscopeAccelerometerTemperatureSensor(rpi)
 	ultrasonicSensor := sensor.NewUltrasonicSensor()
 
 	led := gpio.NewLedDriver(rpi, "32")
@@ -38,13 +39,37 @@ func main() {
 		if err := screen.DisplayIP(); err != nil {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
-
 		arm.Center()
-		time.Sleep(time.Second)
-		arm.PushUpRight()
+		mpu6050.Calibrate()
+		time.Sleep(100 * time.Millisecond)
+
+		numberOfAttemptsToGetBackUp := 0
+		gobot.Every(10*time.Second, func() {
+			if fell, fellOnTheRightSide := mpu6050.FallDetected(); fell {
+				pushRight := fellOnTheRightSide
+				if numberOfAttemptsToGetBackUp > 2 {
+					// tried thrice and it didn't work? let's try the other side
+					pushRight = !pushRight
+				}
+				if pushRight {
+					arm.PushUpRight()
+				} else {
+					arm.PushUpLeft()
+				}
+				numberOfAttemptsToGetBackUp++
+				fmt.Println("fall detected")
+			} else {
+				numberOfAttemptsToGetBackUp = 0
+			}
+		})
+
+		//time.Sleep(time.Second)
+		//arm.PushUpRight()
 		//for {
 		//	arm.Grab()
-		//	time.Sleep(time.Second)
+		//	time.Sleep(3*time.Second)
+		//	arm.Release()
+		//	time.Sleep(2*time.Second)
 		//}
 		//time.Sleep(time.Second)
 		//arm.Sweep()
@@ -118,7 +143,7 @@ func main() {
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, led, arm.Driver},
+		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, led, arm.Driver, mpu6050.Driver},
 		work,
 	)
 
