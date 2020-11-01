@@ -36,13 +36,13 @@ func (a *Arm) Center() {
 	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, 75); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 90); err != nil {
+	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 140); err != nil {
 		fmt.Println(err)
 	}
 	if err := a.Driver.ServoWrite(ClawServoPin, 85); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 70); err != nil {
+	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 60); err != nil {
 		fmt.Println(err)
 	}
 	if err := a.Driver.ServoWrite(CameraVerticalServoPin, 70); err != nil {
@@ -70,4 +70,52 @@ func (a *Arm) Sweep() {
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
+}
+
+func (a *Arm) StraightUp() {
+	if err := a.Driver.SetPWMFreq(50.0); err != nil {
+		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
+	}
+	a.Center()
+	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 180); err != nil {
+		fmt.Println(err)
+	}
+	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 0); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func (a *Arm) PushUpLeft() {
+	a.pushUp(0)
+}
+
+func (a *Arm) PushUpRight() {
+	a.pushUp(150)
+}
+
+func (a *Arm) pushUp(baseHorizontalServoAngle byte) {
+	if err := a.Driver.SetPWMFreq(50.0); err != nil {
+		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
+	}
+	a.StraightUp()
+	time.Sleep(time.Second)
+	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, baseHorizontalServoAngle); err != nil {
+		fmt.Println(err)
+	}
+	time.Sleep(time.Second)
+	for i := 90; i > 0; i -= 5 {
+		if err := a.Driver.ServoWrite(BaseVerticalServoPin, byte(i)); err != nil {
+			fmt.Println(err)
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 50); err != nil {
+		fmt.Println(err)
+	}
+	time.Sleep(time.Second)
+	if err := a.Driver.ServoWrite(ClawServoPin, 0); err != nil {
+		fmt.Println(err)
+	}
+	time.Sleep(time.Second)
+	a.Center()
 }

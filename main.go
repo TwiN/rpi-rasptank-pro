@@ -40,6 +40,8 @@ func main() {
 		}
 
 		arm.Center()
+		time.Sleep(time.Second)
+		arm.PushUpRight()
 		//for {
 		//	arm.Grab()
 		//	time.Sleep(time.Second)
