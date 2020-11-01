@@ -17,6 +17,8 @@ const (
 	// This is to make sure that in case the sound wave is never received, the function
 	// won't hang indefinitely
 	Limit = 100000
+
+	InvalidMeasurement = -1
 )
 
 // UltrasonicSensor is a sensor for HC-SR04
@@ -62,7 +64,7 @@ func (us *UltrasonicSensor) MeasureDistance() float32 {
 		// that there's either a problem, or something is bouncing
 		// the sound wave elsewhere
 		if i == Limit {
-			return 0
+			return InvalidMeasurement
 		}
 	}
 	start = time.Now()
@@ -72,7 +74,7 @@ func (us *UltrasonicSensor) MeasureDistance() float32 {
 		// that there's either a problem, or something is bouncing
 		// the sound wave elsewhere
 		if i == Limit {
-			return 0
+			return InvalidMeasurement
 		}
 	}
 	end = time.Now()
@@ -82,11 +84,11 @@ func (us *UltrasonicSensor) MeasureDistance() float32 {
 // MeasureDistanceReliably calls MeasureDistance thrice and returns the lowest distance measured.
 // This allows a "safer" distance to be measured.
 func (us *UltrasonicSensor) MeasureDistanceReliably() float32 {
-	var measure, lowestMeasuredDistance float32
+	var measure float32
+	var lowestMeasuredDistance float32 = InvalidMeasurement
 	for i := 0; i < 3; i++ {
 		measure = us.MeasureDistance()
-		fmt.Printf("measure %d: %f\n", i, measure)
-		if lowestMeasuredDistance == 0 || lowestMeasuredDistance > measure {
+		if measure != InvalidMeasurement && (lowestMeasuredDistance == InvalidMeasurement || lowestMeasuredDistance > measure) {
 			lowestMeasuredDistance = measure
 		}
 	}
