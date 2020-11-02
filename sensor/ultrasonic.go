@@ -3,6 +3,7 @@ package sensor
 import (
 	"fmt"
 	"github.com/stianeikeland/go-rpio"
+	"sync"
 	"time"
 )
 
@@ -18,13 +19,17 @@ const (
 	// won't hang indefinitely
 	Limit = 100000
 
-	InvalidMeasurement = -1
+	InvalidMeasurement = float32(-1)
 )
 
 // UltrasonicSensor is a sensor for HC-SR04
+//
+// The robot used by this project has this sensor at the very front.
 type UltrasonicSensor struct {
 	triggerPin rpio.Pin
 	echoPin    rpio.Pin
+
+	mutex sync.Mutex
 }
 
 // NewUltrasonicSensor creates a new UltrasonicSensor
@@ -38,12 +43,15 @@ func NewUltrasonicSensor() *UltrasonicSensor {
 	return &UltrasonicSensor{
 		triggerPin: rpio.Pin(TriggerPin),
 		echoPin:    rpio.Pin(EchoPin),
+		mutex:      sync.Mutex{},
 	}
 }
 
 // MeasureDistance measures the distance by sending a high powered ultrasonic sound wave, waiting for its return
 // on the echo pin, and using the time taken to calculate the distance.
 func (us *UltrasonicSensor) MeasureDistance() float32 {
+	us.mutex.Lock()
+	defer us.mutex.Unlock()
 	_ = rpio.Open()
 	defer rpio.Close()
 	// Set echo pin as INPUT and trigger pin as OUTPUT
@@ -85,7 +93,7 @@ func (us *UltrasonicSensor) MeasureDistance() float32 {
 // This allows a "safer" distance to be measured.
 func (us *UltrasonicSensor) MeasureDistanceReliably() float32 {
 	var measure float32
-	var lowestMeasuredDistance float32 = InvalidMeasurement
+	var lowestMeasuredDistance = InvalidMeasurement
 	for i := 0; i < 3; i++ {
 		measure = us.MeasureDistance()
 		if measure != InvalidMeasurement && (lowestMeasuredDistance == InvalidMeasurement || lowestMeasuredDistance > measure) {
