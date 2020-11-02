@@ -36,13 +36,13 @@ func (a *Arm) Center() {
 	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, 75); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 140); err != nil {
+	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 150); err != nil {
 		fmt.Println(err)
 	}
 	if err := a.Driver.ServoWrite(ClawServoPin, 85); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 60); err != nil {
+	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 90); err != nil {
 		fmt.Println(err)
 	}
 	if err := a.Driver.ServoWrite(CameraVerticalServoPin, 70); err != nil {
@@ -50,7 +50,11 @@ func (a *Arm) Center() {
 	}
 }
 
-func (a *Arm) Grab() {
+func (a *Arm) Relax() {
+	_ = a.Driver.SetPWMFreq(0.0)
+}
+
+func (a *Arm) ClawGrab() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
@@ -59,7 +63,7 @@ func (a *Arm) Grab() {
 	}
 }
 
-func (a *Arm) Release() {
+func (a *Arm) ClawRelease() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
@@ -91,6 +95,9 @@ func (a *Arm) StraightUp() {
 	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 0); err != nil {
 		fmt.Println(err)
 	}
+	if err := a.Driver.ServoWrite(CameraVerticalServoPin, 0); err != nil {
+		fmt.Println(err)
+	}
 }
 
 func (a *Arm) PushUpLeft() {
@@ -106,12 +113,12 @@ func (a *Arm) pushUp(baseHorizontalServoAngle byte) {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
 	a.StraightUp()
-	time.Sleep(time.Second)
+	time.Sleep(500 * time.Millisecond)
 	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, baseHorizontalServoAngle); err != nil {
 		fmt.Println(err)
 	}
-	time.Sleep(time.Second)
-	for i := 90; i > 0; i -= 5 {
+	time.Sleep(300 * time.Millisecond)
+	for i := 90; i > 0; i -= 3 {
 		if err := a.Driver.ServoWrite(BaseVerticalServoPin, byte(i)); err != nil {
 			fmt.Println(err)
 		}
@@ -120,10 +127,12 @@ func (a *Arm) pushUp(baseHorizontalServoAngle byte) {
 	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 50); err != nil {
 		fmt.Println(err)
 	}
-	time.Sleep(time.Second)
+	time.Sleep(100 * time.Millisecond)
 	if err := a.Driver.ServoWrite(ClawServoPin, 0); err != nil {
 		fmt.Println(err)
 	}
 	time.Sleep(time.Second)
 	a.Center()
+	time.Sleep(time.Second)
+	a.Relax()
 }
