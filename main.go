@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/TwinProduction/rpi-rasptank-pro/camera"
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"github.com/TwinProduction/rpi-rasptank-pro/sensor"
@@ -97,6 +98,13 @@ func main() {
 				}
 			}
 		})
+
+		for {
+			if err := camera.Run(arm); err != nil {
+				log.Println("Failed to run camera:", err.Error())
+			}
+			time.Sleep(time.Second)
+		}
 
 		//time.Sleep(time.Second)
 		//arm.PushUpRight()

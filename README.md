@@ -6,3 +6,6 @@
 | **Device** | Raspberry PI 3B+
 
 
+## Requirements
+
+- `dtparam=i2c_arm=on` in `/boot/config.txt`

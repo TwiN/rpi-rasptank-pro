@@ -136,3 +136,17 @@ func (a *Arm) pushUp(baseHorizontalServoAngle byte) {
 	time.Sleep(time.Second)
 	a.Relax()
 }
+
+func (a *Arm) LookAt(x, y int) {
+	if err := a.Driver.SetPWMFreq(50.0); err != nil {
+		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
+	}
+	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, byte(x)); err != nil {
+		fmt.Println(err)
+	}
+	if err := a.Driver.ServoWrite(CameraVerticalServoPin, byte(y)); err != nil {
+		fmt.Println(err)
+	}
+	time.Sleep(time.Second)
+	a.Relax()
+}

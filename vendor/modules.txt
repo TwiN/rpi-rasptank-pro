@@ -1,5 +1,8 @@
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
+# github.com/esimov/pigo v1.4.2
+## explicit
+github.com/esimov/pigo/core
 # github.com/gobuffalo/uuid v2.0.5+incompatible
 github.com/gobuffalo/uuid
 # github.com/gofrs/uuid v3.2.0+incompatible
@@ -12,6 +15,7 @@ github.com/hashicorp/go-multierror
 ## explicit
 github.com/pbnjay/pixfont
 # github.com/pkg/errors v0.8.1
+## explicit
 github.com/pkg/errors
 # github.com/sigurn/crc8 v0.0.0-20160107002456-e55481d6f45c
 github.com/sigurn/crc8
