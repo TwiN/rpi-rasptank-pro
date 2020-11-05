@@ -18,8 +18,8 @@ const (
 type MPU6050GyroscopeAccelerometerTemperatureSensor struct {
 	Driver *i2c.MPU6050Driver
 
-	calibratedAccelerometerX, calibratedAccelerometerY, calibratedAccelerometerZ int16
-	calibratedGyroscopeX, calibratedGyroscopeY, calibratedGyroscopeZ             int16
+	calibratedAccelerometerOffsetX, calibratedAccelerometerOffsetY, calibratedAccelerometerOffsetZ int16
+	calibratedGyroscopeOffsetX, calibratedGyroscopeOffsetY, calibratedGyroscopeOffsetZ             int16
 }
 
 func NewMPU6050GyroscopeAccelerometerTemperatureSensor(rpi *raspi.Adaptor) *MPU6050GyroscopeAccelerometerTemperatureSensor {
@@ -43,12 +43,12 @@ func (m *MPU6050GyroscopeAccelerometerTemperatureSensor) Calibrate() error {
 		// data not there yet, let's try again
 		return m.Calibrate()
 	}
-	m.calibratedAccelerometerX = m.Driver.Accelerometer.X
-	m.calibratedAccelerometerY = m.Driver.Accelerometer.Y
-	m.calibratedAccelerometerZ = m.Driver.Accelerometer.Z
-	m.calibratedGyroscopeX = m.Driver.Gyroscope.X
-	m.calibratedGyroscopeY = m.Driver.Gyroscope.Y
-	m.calibratedGyroscopeZ = m.Driver.Gyroscope.Z
+	m.calibratedAccelerometerOffsetX = m.Driver.Accelerometer.X
+	m.calibratedAccelerometerOffsetY = m.Driver.Accelerometer.Y
+	m.calibratedAccelerometerOffsetZ = m.Driver.Accelerometer.Z
+	m.calibratedGyroscopeOffsetX = m.Driver.Gyroscope.X
+	m.calibratedGyroscopeOffsetY = m.Driver.Gyroscope.Y
+	m.calibratedGyroscopeOffsetZ = m.Driver.Gyroscope.Z
 	fmt.Printf("[calibrated] ax=%d; ay=%d; az=%d; gx=%d; gy=%d; gz=%d\n", m.Driver.Accelerometer.X, m.Driver.Accelerometer.Y, m.Driver.Accelerometer.Z, m.Driver.Gyroscope.X, m.Driver.Gyroscope.Y, m.Driver.Gyroscope.Z)
 	return nil
 }
@@ -64,12 +64,12 @@ func (m *MPU6050GyroscopeAccelerometerTemperatureSensor) FallDetected() (bool, b
 	}
 	//fmt.Printf("[before] ax=%d; ay=%d; az=%d; gx=%d; gy=%d; gz=%d\n", m.Driver.Accelerometer.X, m.Driver.Accelerometer.Y, m.Driver.Accelerometer.Z, m.Driver.Gyroscope.X, m.Driver.Gyroscope.Y, m.Driver.Gyroscope.Z)
 	// Normalize data
-	m.Driver.Accelerometer.X = (m.Driver.Accelerometer.X - m.calibratedAccelerometerX) / 1000
-	m.Driver.Accelerometer.Y = (m.Driver.Accelerometer.Y - m.calibratedAccelerometerY) / 1000
-	m.Driver.Accelerometer.Z = (m.Driver.Accelerometer.Z - m.calibratedAccelerometerZ) / 1000
-	m.Driver.Gyroscope.X -= m.calibratedGyroscopeX
-	m.Driver.Gyroscope.Y -= m.calibratedGyroscopeY
-	m.Driver.Gyroscope.Z -= m.calibratedGyroscopeZ
+	m.Driver.Accelerometer.X = (m.Driver.Accelerometer.X - m.calibratedAccelerometerOffsetX) / 1000
+	m.Driver.Accelerometer.Y = (m.Driver.Accelerometer.Y - m.calibratedAccelerometerOffsetY) / 1000
+	m.Driver.Accelerometer.Z = (m.Driver.Accelerometer.Z - m.calibratedAccelerometerOffsetZ) / 1000
+	m.Driver.Gyroscope.X -= m.calibratedGyroscopeOffsetX
+	m.Driver.Gyroscope.Y -= m.calibratedGyroscopeOffsetY
+	m.Driver.Gyroscope.Z -= m.calibratedGyroscopeOffsetZ
 	//fmt.Printf("[after] ax=%d; ay=%d; az=%d; gx=%d; gy=%d; gz=%d\n", m.Driver.Accelerometer.X, m.Driver.Accelerometer.Y, m.Driver.Accelerometer.Z, m.Driver.Gyroscope.X, m.Driver.Gyroscope.Y, m.Driver.Gyroscope.Z)
 
 	// pitch is used to figure out whether the bot fell forward or backward
@@ -79,7 +79,9 @@ func (m *MPU6050GyroscopeAccelerometerTemperatureSensor) FallDetected() (bool, b
 	// A positive roll means that the bot fell on its left side
 	roll := (math.Atan2(float64(m.Driver.Accelerometer.Y), float64(m.Driver.Accelerometer.Z)) * 180.0) / math.Pi
 
-	fmt.Printf("pitch=%.0f; roll=%.0f\n", pitch, roll)
+	if pitch != 0 || roll != 0 {
+		log.Printf("pitch=%.0f; roll=%.0f", pitch, roll)
+	}
 
 	if pitch > FallDetectionThreshold || pitch < -FallDetectionThreshold || roll > FallDetectionThreshold || roll < -FallDetectionThreshold {
 		if roll < 0 {
