@@ -17,6 +17,12 @@ const (
 	ClawServoPin           = "2"
 	ClawVerticalServoPin   = "3"
 	CameraVerticalServoPin = "4"
+
+	DefaultBaseHorizontalPosition = 75
+	DefaultBaseVerticalPosition   = 150
+	DefaultClawPosition           = 85
+	DefaultClawVerticalPosition   = 90
+	DefaultCameraVerticalPosition = 70
 )
 
 type Arm struct {
@@ -33,19 +39,19 @@ func (a *Arm) Center() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
-	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, 75); err != nil {
+	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, DefaultBaseHorizontalPosition); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 150); err != nil {
+	if err := a.Driver.ServoWrite(BaseVerticalServoPin, DefaultBaseVerticalPosition); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(ClawServoPin, 85); err != nil {
+	if err := a.Driver.ServoWrite(ClawServoPin, DefaultClawPosition); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 90); err != nil {
+	if err := a.Driver.ServoWrite(ClawVerticalServoPin, DefaultClawVerticalPosition); err != nil {
 		fmt.Println(err)
 	}
-	if err := a.Driver.ServoWrite(CameraVerticalServoPin, 70); err != nil {
+	if err := a.Driver.ServoWrite(CameraVerticalServoPin, DefaultCameraVerticalPosition); err != nil {
 		fmt.Println(err)
 	}
 }
@@ -67,7 +73,7 @@ func (a *Arm) ClawRelease() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
-	if err := a.Driver.ServoWrite(ClawServoPin, byte(70)); err != nil {
+	if err := a.Driver.ServoWrite(ClawServoPin, byte(DefaultClawPosition)); err != nil {
 		fmt.Println(err)
 	}
 }
@@ -138,6 +144,16 @@ func (a *Arm) pushUp(baseHorizontalServoAngle byte) {
 }
 
 func (a *Arm) LookAt(x, y int) {
+	if x > DefaultBaseHorizontalPosition+30 {
+		x = DefaultBaseHorizontalPosition + 30
+	} else if x < DefaultBaseHorizontalPosition-30 {
+		x = DefaultBaseHorizontalPosition - 30
+	}
+	if y > DefaultCameraVerticalPosition+30 {
+		y = DefaultCameraVerticalPosition + 30
+	} else if y < DefaultCameraVerticalPosition-30 {
+		y = DefaultCameraVerticalPosition - 30
+	}
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}

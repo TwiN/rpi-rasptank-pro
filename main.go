@@ -99,11 +99,8 @@ func main() {
 			}
 		})
 
-		for {
-			if err := camera.Run(arm); err != nil {
-				log.Println("Failed to run camera:", err.Error())
-			}
-			time.Sleep(time.Second)
+		if err := camera.Run(arm); err != nil {
+			log.Println("Failed to run camera:", err.Error())
 		}
 
 		//time.Sleep(time.Second)

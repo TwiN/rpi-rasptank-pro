@@ -8,8 +8,10 @@ import (
 	"image"
 	"image/jpeg"
 	"io/ioutil"
+	"math"
 	"os"
 	"os/exec"
+	"time"
 )
 
 const (
@@ -17,7 +19,7 @@ const (
 )
 
 func TakePicture() (image.Image, error) {
-	err := exec.Command("/bin/bash", "-c", "/usr/bin/raspistill -o picture.jpeg -t 1").Run()
+	err := exec.Command("/bin/bash", "-c", "/usr/bin/raspistill --quality 75 --timeout 350 -w 1600 -h 1200 --output picture.jpeg").Run()
 	if err != nil {
 		return nil, err
 	}
@@ -33,15 +35,70 @@ func TakePicture() (image.Image, error) {
 }
 
 func Run(arm *controller.Arm) error {
+	cascade, err := ioutil.ReadFile(ClassifierModelFile)
+	if err != nil {
+		return errors.Wrap(err, "error unpacking the cascade file")
+	}
+	classifier, err := pigo.NewPigo().Unpack(cascade)
+	if err != nil {
+		return errors.Wrap(err, "error unpacking the cascade file")
+	}
+	targetX := controller.DefaultBaseHorizontalPosition
+	targetY := controller.DefaultCameraVerticalPosition
+	for {
+		//time.Sleep(200 * time.Millisecond)
+		faces, img, err := detectFaces(classifier)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("detected %d faces\n", len(faces))
+		if len(faces) > 0 {
+			fmt.Printf("x=%d; xCenter=%d; y=%d; yCenter=%d; faces[0].Scale=%d\n", faces[0].Col, img.Bounds().Max.X/2, faces[0].Row, img.Bounds().Max.Y/2, faces[0].Scale)
+
+			if math.Abs(float64((img.Bounds().Max.X/2)-faces[0].Col)) > 200 {
+				if faces[0].Col > img.Bounds().Max.X/2 {
+					fmt.Println("<--------")
+					targetX -= 10
+				} else {
+					fmt.Println("-------->")
+					targetX += 10
+				}
+			} else {
+				fmt.Println("not moving bc close enough")
+			}
+			if math.Abs(float64((img.Bounds().Max.Y/2)-faces[0].Row)) > 100 {
+				if faces[0].Row > img.Bounds().Max.Y/2 {
+					fmt.Println("^")
+					targetY -= 10
+				} else {
+					fmt.Println("v")
+					targetY += 10
+				}
+			} else {
+				fmt.Println("not moving bc close enough")
+			}
+		} else {
+			targetX = controller.DefaultBaseHorizontalPosition
+			targetY = controller.DefaultCameraVerticalPosition
+		}
+		arm.LookAt(targetX, targetY)
+	}
+	return nil
+}
+
+func detectFaces(classifier *pigo.Pigo) ([]pigo.Detection, image.Image, error) {
+	start := time.Now()
 	img, err := TakePicture()
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
+	fmt.Printf("picture taken at %s\n", time.Since(start))
 	nrgbaImage := pigo.ImgToNRGBA(img)
 	pixels := pigo.RgbToGrayscale(nrgbaImage)
+	fmt.Printf("picture converted to grayscale at %s\n", time.Since(start))
 	cParams := pigo.CascadeParams{
 		MinSize:     100,
-		MaxSize:     600,
+		MaxSize:     800,
 		ShiftFactor: 0.15,
 		ScaleFactor: 1.1,
 		ImageParams: pigo.ImageParams{
@@ -51,28 +108,9 @@ func Run(arm *controller.Arm) error {
 			Dim:    nrgbaImage.Bounds().Max.X,
 		},
 	}
-	cascade, err := ioutil.ReadFile(ClassifierModelFile)
-	if err != nil {
-		return errors.Wrap(err, "error unpacking the cascade file")
-	}
-	p := pigo.NewPigo()
-	classifier, err := p.Unpack(cascade)
-	if err != nil {
-		return errors.Wrap(err, "error unpacking the cascade file")
-	}
-
 	detections := classifier.RunCascade(cParams, 0.0)
-	//for {
-	//	time.Sleep(200 * time.Millisecond)
+	fmt.Printf("cascade ran at %s\n", time.Since(start))
 	faces := classifier.ClusterDetections(detections, 0)
-	fmt.Printf("detected %d faces\n", len(faces))
-	//	if len(faces) > 0 {
-	//		// move camera until the face is in the middle of the picture
-	//		targetX := (img.Bounds().Max.X / 2) - (faces[0].Size().X / 2)
-	//		targetY := (img.Bounds().Max.Y / 2) - (faces[0].Size().Y / 2)
-	//		fmt.Printf("targetX=%d; targetY=%d\n", targetX, targetY)
-	//		//arm.LookAt()
-	//	}
-	//}
-	return nil
+	fmt.Printf("cluster detection finished at %s\n", time.Since(start))
+	return faces, img, nil
 }
