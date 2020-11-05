@@ -6,10 +6,9 @@ import (
 	pigo "github.com/esimov/pigo/core"
 	"github.com/pkg/errors"
 	"image"
-	"image/jpeg"
+	_ "image/jpeg"
 	"io/ioutil"
 	"math"
-	"os"
 	"os/exec"
 	"time"
 )
@@ -18,16 +17,20 @@ const (
 	ClassifierModelFile = "data/facefinder"
 )
 
-func TakePicture() (image.Image, error) {
-	err := exec.Command("/bin/bash", "-c", "/usr/bin/raspistill --quality 75 --timeout 350 -w 1600 -h 1200 --output picture.jpeg").Run()
+func TakePicture() (*image.NRGBA, error) {
+	err := exec.Command("/bin/bash", "-c", "/usr/bin/raspistill --quality 80 --timeout 350 -w 1600 -h 1200 --nopreview --output picture.jpeg").Run()
 	if err != nil {
 		return nil, err
 	}
-	file, err := os.Open("picture.jpeg")
-	if err != nil {
-		return nil, err
-	}
-	img, err := jpeg.Decode(file)
+	//file, err := os.Open("picture.jpeg")
+	//if err != nil {
+	//	return nil, err
+	//}
+	//img, err := jpeg.Decode(file)
+	//if err != nil {
+	//	return nil, errors.Wrap(err, "failed to decode jpeg")
+	//}
+	img, err := pigo.GetImage("picture.jpeg")
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode jpeg")
 	}
@@ -93,8 +96,7 @@ func detectFaces(classifier *pigo.Pigo) ([]pigo.Detection, image.Image, error) {
 		return nil, nil, err
 	}
 	fmt.Printf("picture taken at %s\n", time.Since(start))
-	nrgbaImage := pigo.ImgToNRGBA(img)
-	pixels := pigo.RgbToGrayscale(nrgbaImage)
+	pixels := pigo.RgbToGrayscale(img)
 	fmt.Printf("picture converted to grayscale at %s\n", time.Since(start))
 	cParams := pigo.CascadeParams{
 		MinSize:     100,
@@ -103,9 +105,9 @@ func detectFaces(classifier *pigo.Pigo) ([]pigo.Detection, image.Image, error) {
 		ScaleFactor: 1.1,
 		ImageParams: pigo.ImageParams{
 			Pixels: pixels,
-			Rows:   nrgbaImage.Bounds().Max.Y,
-			Cols:   nrgbaImage.Bounds().Max.X,
-			Dim:    nrgbaImage.Bounds().Max.X,
+			Rows:   img.Bounds().Max.Y,
+			Cols:   img.Bounds().Max.X,
+			Dim:    img.Bounds().Max.X,
 		},
 	}
 	detections := classifier.RunCascade(cParams, 0.0)
