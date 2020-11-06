@@ -1,5 +1,7 @@
 # rpi-rasptank-pro
 
+This is a robotics project that uses an Adeept RaspTank Pro.
+
 | Key        | Value |
 |:---------- |:----- |
 | **Model**  | Adeept RaspTank Pro
