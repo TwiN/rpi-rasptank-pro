@@ -18,7 +18,7 @@ const (
 )
 
 func TakePicture() (*image.NRGBA, error) {
-	err := exec.Command("/bin/bash", "-c", "/usr/bin/raspistill --quality 80 --timeout 350 -w 1600 -h 1200 --nopreview --output picture.jpeg").Run()
+	err := exec.Command("/bin/bash", "-c", "/usr/bin/raspistill --quality 50 --exposure sports --timeout 50 -w 1280 -h 960 --nopreview --output picture.jpg").Run()
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func TakePicture() (*image.NRGBA, error) {
 	//if err != nil {
 	//	return nil, errors.Wrap(err, "failed to decode jpeg")
 	//}
-	img, err := pigo.GetImage("picture.jpeg")
+	img, err := pigo.GetImage("picture.jpg")
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode jpeg")
 	}
@@ -95,9 +95,11 @@ func detectFaces(classifier *pigo.Pigo) ([]pigo.Detection, image.Image, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	fmt.Printf("picture taken at %s\n", time.Since(start))
+	fmt.Printf("picture taken in %s\n", time.Since(start))
+	start = time.Now()
 	pixels := pigo.RgbToGrayscale(img)
-	fmt.Printf("picture converted to grayscale at %s\n", time.Since(start))
+	fmt.Printf("picture converted to grayscale in %s\n", time.Since(start))
+	start = time.Now()
 	cParams := pigo.CascadeParams{
 		MinSize:     100,
 		MaxSize:     800,
@@ -111,8 +113,10 @@ func detectFaces(classifier *pigo.Pigo) ([]pigo.Detection, image.Image, error) {
 		},
 	}
 	detections := classifier.RunCascade(cParams, 0.0)
-	fmt.Printf("cascade ran at %s\n", time.Since(start))
+	fmt.Printf("cascade ran in %s\n", time.Since(start))
+	start = time.Now()
 	faces := classifier.ClusterDetections(detections, 0)
-	fmt.Printf("cluster detection finished at %s\n", time.Since(start))
+	fmt.Printf("cluster detection finished in %s\n", time.Since(start))
+	start = time.Now()
 	return faces, img, nil
 }
