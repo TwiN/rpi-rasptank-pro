@@ -1,7 +1,6 @@
 package sensor
 
 import (
-	"fmt"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
@@ -49,7 +48,7 @@ func (m *MPU6050GyroscopeAccelerometerTemperatureSensor) Calibrate() error {
 	m.calibratedGyroscopeOffsetX = m.Driver.Gyroscope.X
 	m.calibratedGyroscopeOffsetY = m.Driver.Gyroscope.Y
 	m.calibratedGyroscopeOffsetZ = m.Driver.Gyroscope.Z
-	fmt.Printf("[calibrated] ax=%d; ay=%d; az=%d; gx=%d; gy=%d; gz=%d\n", m.Driver.Accelerometer.X, m.Driver.Accelerometer.Y, m.Driver.Accelerometer.Z, m.Driver.Gyroscope.X, m.Driver.Gyroscope.Y, m.Driver.Gyroscope.Z)
+	log.Printf("[Calibrate] ax=%d; ay=%d; az=%d; gx=%d; gy=%d; gz=%d", m.Driver.Accelerometer.X, m.Driver.Accelerometer.Y, m.Driver.Accelerometer.Z, m.Driver.Gyroscope.X, m.Driver.Gyroscope.Y, m.Driver.Gyroscope.Z)
 	return nil
 }
 
