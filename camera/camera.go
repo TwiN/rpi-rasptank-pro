@@ -46,8 +46,8 @@ func Run(arm *controller.Arm) error {
 	if err != nil {
 		return errors.Wrap(err, "error unpacking the cascade file")
 	}
-	targetX := controller.DefaultBaseHorizontalPosition
-	targetY := controller.DefaultCameraVerticalPosition
+	targetX := arm.BaseHorizontalServo.Default
+	targetY := arm.CameraVerticalServo.Default
 	for {
 		//time.Sleep(200 * time.Millisecond)
 		faces, img, err := detectFaces(classifier)
@@ -81,8 +81,8 @@ func Run(arm *controller.Arm) error {
 				fmt.Println("not moving bc close enough")
 			}
 		} else {
-			targetX = controller.DefaultBaseHorizontalPosition
-			targetY = controller.DefaultCameraVerticalPosition
+			targetX = arm.BaseHorizontalServo.Default
+			targetY = arm.CameraVerticalServo.Default
 		}
 		arm.LookAt(targetX, targetY)
 	}

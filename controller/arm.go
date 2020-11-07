@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
@@ -11,27 +10,47 @@ import (
 const (
 	armBus     = 1
 	armAddress = 0x40
-
-	BaseHorizontalServoPin = "0"
-	BaseVerticalServoPin   = "1"
-	ClawServoPin           = "2"
-	ClawVerticalServoPin   = "3"
-	CameraVerticalServoPin = "4"
-
-	DefaultBaseHorizontalPosition = 75
-	DefaultBaseVerticalPosition   = 150
-	DefaultClawPosition           = 85
-	DefaultClawVerticalPosition   = 90
-	DefaultCameraVerticalPosition = 70
 )
 
 type Arm struct {
 	Driver *i2c.PCA9685Driver
+
+	BaseHorizontalServo, BaseVerticalServo, ClawServo, ClawVerticalServo, CameraVerticalServo servo
 }
 
 func NewArm(rpi *raspi.Adaptor) *Arm {
 	return &Arm{
 		Driver: i2c.NewPCA9685Driver(rpi, i2c.WithBus(armBus), i2c.WithAddress(armAddress)),
+		BaseHorizontalServo: servo{
+			Pin:     "0",
+			Default: 75,
+			Min:     0,
+			Max:     105,
+		},
+		BaseVerticalServo: servo{
+			Pin:     "1",
+			Default: 150,
+			Min:     0,
+			Max:     180,
+		},
+		ClawServo: servo{
+			Pin:     "2",
+			Default: 85,
+			Min:     0,
+			Max:     85,
+		},
+		ClawVerticalServo: servo{
+			Pin:     "3",
+			Default: 90,
+			Min:     0,
+			Max:     90,
+		},
+		CameraVerticalServo: servo{
+			Pin:     "4",
+			Default: 70,
+			Min:     0,
+			Max:     100,
+		},
 	}
 }
 
@@ -39,21 +58,11 @@ func (a *Arm) Center() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
-	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, DefaultBaseHorizontalPosition); err != nil {
-		fmt.Println(err)
-	}
-	if err := a.Driver.ServoWrite(BaseVerticalServoPin, DefaultBaseVerticalPosition); err != nil {
-		fmt.Println(err)
-	}
-	if err := a.Driver.ServoWrite(ClawServoPin, DefaultClawPosition); err != nil {
-		fmt.Println(err)
-	}
-	if err := a.Driver.ServoWrite(ClawVerticalServoPin, DefaultClawVerticalPosition); err != nil {
-		fmt.Println(err)
-	}
-	if err := a.Driver.ServoWrite(CameraVerticalServoPin, DefaultCameraVerticalPosition); err != nil {
-		fmt.Println(err)
-	}
+	a.BaseHorizontalServo.MoveDefault(a.Driver)
+	a.BaseVerticalServo.MoveDefault(a.Driver)
+	a.ClawServo.MoveDefault(a.Driver)
+	a.ClawVerticalServo.MoveDefault(a.Driver)
+	a.CameraVerticalServo.MoveDefault(a.Driver)
 }
 
 func (a *Arm) Relax() {
@@ -64,18 +73,14 @@ func (a *Arm) ClawGrab() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
-	if err := a.Driver.ServoWrite(ClawServoPin, byte(0)); err != nil {
-		fmt.Println(err)
-	}
+	a.ClawServo.Move(a.Driver, 0)
 }
 
 func (a *Arm) ClawRelease() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
-	if err := a.Driver.ServoWrite(ClawServoPin, byte(DefaultClawPosition)); err != nil {
-		fmt.Println(err)
-	}
+	a.ClawServo.MoveDefault(a.Driver)
 }
 
 func (a *Arm) Sweep() {
@@ -83,8 +88,8 @@ func (a *Arm) Sweep() {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
 	for i := 0; i < 90; i++ {
-		if err := a.Driver.ServoWrite(BaseHorizontalServoPin, byte(i)); err != nil {
-			fmt.Println(err)
+		if err := a.BaseHorizontalServo.Move(a.Driver, i); err != nil {
+			log.Println(err)
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
@@ -95,15 +100,8 @@ func (a *Arm) StraightUp() {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
 	a.Center()
-	if err := a.Driver.ServoWrite(BaseVerticalServoPin, 180); err != nil {
-		fmt.Println(err)
-	}
-	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 0); err != nil {
-		fmt.Println(err)
-	}
-	if err := a.Driver.ServoWrite(CameraVerticalServoPin, 0); err != nil {
-		fmt.Println(err)
-	}
+	a.BaseVerticalServo.MoveMin(a.Driver)
+	a.ClawVerticalServo.MoveMin(a.Driver)
 }
 
 func (a *Arm) PushUpLeft() {
@@ -114,29 +112,21 @@ func (a *Arm) PushUpRight() {
 	a.pushUp(0)
 }
 
-func (a *Arm) pushUp(baseHorizontalServoAngle byte) {
+func (a *Arm) pushUp(baseHorizontalServoAngle int) {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
 	a.StraightUp()
 	time.Sleep(500 * time.Millisecond)
-	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, baseHorizontalServoAngle); err != nil {
-		fmt.Println(err)
-	}
+	a.BaseHorizontalServo.Move(a.Driver, baseHorizontalServoAngle)
 	time.Sleep(300 * time.Millisecond)
 	for i := 90; i > 0; i -= 3 {
-		if err := a.Driver.ServoWrite(BaseVerticalServoPin, byte(i)); err != nil {
-			fmt.Println(err)
-		}
+		a.BaseVerticalServo.Move(a.Driver, i)
 		time.Sleep(100 * time.Millisecond)
 	}
-	if err := a.Driver.ServoWrite(ClawVerticalServoPin, 50); err != nil {
-		fmt.Println(err)
-	}
+	a.ClawVerticalServo.Move(a.Driver, 50)
 	time.Sleep(100 * time.Millisecond)
-	if err := a.Driver.ServoWrite(ClawServoPin, 0); err != nil {
-		fmt.Println(err)
-	}
+	a.ClawServo.MoveMin(a.Driver)
 	time.Sleep(time.Second)
 	a.Center()
 	time.Sleep(time.Second)
@@ -144,25 +134,11 @@ func (a *Arm) pushUp(baseHorizontalServoAngle byte) {
 }
 
 func (a *Arm) LookAt(x, y int) {
-	if x > DefaultBaseHorizontalPosition+30 {
-		x = DefaultBaseHorizontalPosition + 30
-	} else if x < DefaultBaseHorizontalPosition-30 {
-		x = DefaultBaseHorizontalPosition - 30
-	}
-	if y > DefaultCameraVerticalPosition+30 {
-		y = DefaultCameraVerticalPosition + 30
-	} else if y < DefaultCameraVerticalPosition-30 {
-		y = DefaultCameraVerticalPosition - 30
-	}
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
-	if err := a.Driver.ServoWrite(BaseHorizontalServoPin, byte(x)); err != nil {
-		fmt.Println(err)
-	}
-	if err := a.Driver.ServoWrite(CameraVerticalServoPin, byte(y)); err != nil {
-		fmt.Println(err)
-	}
+	a.BaseHorizontalServo.Move(a.Driver, x)
+	a.CameraVerticalServo.Move(a.Driver, y)
 	time.Sleep(time.Second)
 	a.Relax()
 }
