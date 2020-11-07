@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	ArmBus     = 1
-	ArmAddress = 0x40
+	armBus     = 1
+	armAddress = 0x40
 
 	BaseHorizontalServoPin = "0"
 	BaseVerticalServoPin   = "1"
@@ -31,7 +31,7 @@ type Arm struct {
 
 func NewArm(rpi *raspi.Adaptor) *Arm {
 	return &Arm{
-		Driver: i2c.NewPCA9685Driver(rpi, i2c.WithBus(ArmBus), i2c.WithAddress(ArmAddress)),
+		Driver: i2c.NewPCA9685Driver(rpi, i2c.WithBus(armBus), i2c.WithAddress(armAddress)),
 	}
 }
 

@@ -15,8 +15,8 @@ const (
 	Width  = 128
 	Height = 64
 
-	Bus     = 1
-	Address = 0x3c
+	bus     = 1
+	address = 0x3c
 )
 
 type Display struct {
@@ -25,7 +25,7 @@ type Display struct {
 
 func NewDisplay(rpi *raspi.Adaptor) *Display {
 	return &Display{
-		Driver: i2c.NewSSD1306Driver(rpi, i2c.WithBus(Bus), i2c.WithAddress(Address)),
+		Driver: i2c.NewSSD1306Driver(rpi, i2c.WithBus(bus), i2c.WithAddress(address)),
 	}
 }
 
