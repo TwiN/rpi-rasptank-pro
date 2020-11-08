@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/TwinProduction/rpi-rasptank-pro/camera"
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"github.com/TwinProduction/rpi-rasptank-pro/sensor"
@@ -44,27 +43,38 @@ func main() {
 		mpu6050Sensor.Calibrate()
 		time.Sleep(100 * time.Millisecond)
 		//arm.Sweep()
+
+		//arm.ClawExtendGrab(true)
+		//time.Sleep(500 * time.Millisecond)
+		//arm.ClawExtendRelease(true)
+
 		// Automatically get back up if bot falls
 		numberOfAttemptsToGetBackUp := 0
+		sanityCheck := false
 		gobot.Every(5*time.Second, func() {
 			if fell, fellOnTheRightSide := mpu6050Sensor.FallDetected(); fell {
-				fmt.Println("fall detected")
-				pushRight := fellOnTheRightSide
-				if numberOfAttemptsToGetBackUp > 2 {
-					// tried thrice and it didn't work? let's try the other side
-					pushRight = !pushRight
-				}
-				if pushRight {
-					arm.PushUpRight()
+				if sanityCheck {
+					fmt.Println("fall detected")
+					pushRight := fellOnTheRightSide
+					if numberOfAttemptsToGetBackUp > 2 {
+						// tried thrice and it didn't work? let's try the other side
+						pushRight = !pushRight
+					}
+					if pushRight {
+						arm.PushUpRight()
+					} else {
+						arm.PushUpLeft()
+					}
+					numberOfAttemptsToGetBackUp++
+					// Wait for a bit to make sure the bot is stabilized after getting back up
+					// Not waiting may cause an additional fall detection
+					time.Sleep(time.Second)
 				} else {
-					arm.PushUpLeft()
+					sanityCheck = true
 				}
-				numberOfAttemptsToGetBackUp++
-				// Wait for a bit to make sure the bot is stabilized after getting back up
-				// Not waiting may cause an additional fall detection
-				time.Sleep(time.Second)
 			} else {
 				numberOfAttemptsToGetBackUp = 0
+				sanityCheck = false
 			}
 		})
 
@@ -85,7 +95,7 @@ func main() {
 			}
 		})
 
-		// 10% chance of closing claws if there's an obstacle within 30cm
+		// 5% chance of closing claws if there's an obstacle within 30cm
 		gobot.Every(5*time.Second, func() {
 			distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
 			if distanceFromObstacle != sensor.InvalidMeasurement && distanceFromObstacle < 30 {
@@ -97,9 +107,9 @@ func main() {
 			}
 		})
 
-		if err := camera.Run(arm); err != nil {
-			log.Println("Failed to run camera:", err.Error())
-		}
+		//if err := camera.Run(arm); err != nil {
+		//	log.Println("Failed to run camera:", err.Error())
+		//}
 
 		//time.Sleep(time.Second)
 		//arm.PushUpRight()
