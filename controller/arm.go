@@ -17,37 +17,37 @@ type Arm struct {
 	sync.Mutex
 	Driver *i2c.PCA9685Driver
 
-	BaseHorizontalServo, BaseVerticalServo, ClawServo, ClawVerticalServo, CameraVerticalServo servo
+	BaseHorizontalServo, BaseVerticalServo, ClawServo, ClawVerticalServo, CameraVerticalServo *servo
 }
 
 func NewArm(rpi *raspi.Adaptor) *Arm {
 	return &Arm{
 		Driver: i2c.NewPCA9685Driver(rpi, i2c.WithBus(armBus), i2c.WithAddress(armAddress)),
-		BaseHorizontalServo: servo{
+		BaseHorizontalServo: &servo{
 			Pin:     "0",
 			Default: 75,
 			Min:     0,
 			Max:     170,
 		},
-		BaseVerticalServo: servo{
+		BaseVerticalServo: &servo{
 			Pin:     "1",
 			Default: 150,
 			Min:     0,
 			Max:     180,
 		},
-		ClawServo: servo{
+		ClawServo: &servo{
 			Pin:     "2",
 			Default: 85,
 			Min:     0,
 			Max:     85,
 		},
-		ClawVerticalServo: servo{
+		ClawVerticalServo: &servo{
 			Pin:     "3",
 			Default: 90,
 			Min:     0,
 			Max:     90,
 		},
-		CameraVerticalServo: servo{
+		CameraVerticalServo: &servo{
 			Pin:     "4",
 			Default: 70,
 			Min:     0,
