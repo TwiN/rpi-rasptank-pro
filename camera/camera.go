@@ -10,7 +10,6 @@ import (
 	"io/ioutil"
 	"math"
 	"os/exec"
-	"time"
 )
 
 const (
@@ -47,10 +46,9 @@ func Run(arm *controller.Arm) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("detected %d faces\n", len(faces))
+		//fmt.Printf("detected %d faces\n", len(faces))
 		if len(faces) > 0 {
-			fmt.Printf("x=%d; xCenter=%d; y=%d; yCenter=%d; faces[0].Scale=%d detectionScore=%.02f\n", faces[0].Col, img.Bounds().Max.X/2, faces[0].Row, img.Bounds().Max.Y/2, faces[0].Scale, faces[0].Q)
-
+			//fmt.Printf("x=%d; xCenter=%d; y=%d; yCenter=%d; faces[0].Scale=%d detectionScore=%.02f\n", faces[0].Col, img.Bounds().Max.X/2, faces[0].Row, img.Bounds().Max.Y/2, faces[0].Scale, faces[0].Q)
 			if math.Abs(float64((img.Bounds().Max.X/2)-faces[0].Col)) > 200 {
 				if faces[0].Col > img.Bounds().Max.X/2 {
 					fmt.Println("<--------")
@@ -60,7 +58,7 @@ func Run(arm *controller.Arm) error {
 					targetX += 10
 				}
 			} else {
-				fmt.Println("not moving bc close enough")
+				//fmt.Println("not moving bc close enough")
 			}
 			if math.Abs(float64((img.Bounds().Max.Y/2)-faces[0].Row)) > 200 {
 				if faces[0].Row > img.Bounds().Max.Y/2 {
@@ -71,7 +69,7 @@ func Run(arm *controller.Arm) error {
 					targetY += 10
 				}
 			} else {
-				fmt.Println("not moving bc close enough")
+				//fmt.Println("not moving bc close enough")
 			}
 		} else {
 			targetX = arm.BaseHorizontalServo.Default
@@ -88,16 +86,16 @@ func Run(arm *controller.Arm) error {
 }
 
 func detectFaces(classifier *pigo.Pigo) ([]pigo.Detection, image.Image, error) {
-	start := time.Now()
+	//start := time.Now()
 	img, err := TakePicture()
 	if err != nil {
 		return nil, nil, err
 	}
-	fmt.Printf("picture taken in %s\n", time.Since(start))
-	start = time.Now()
+	//fmt.Printf("picture taken in %s\n", time.Since(start))
+	//start = time.Now()
 	pixels := pigo.RgbToGrayscale(img)
-	fmt.Printf("picture converted to grayscale in %s\n", time.Since(start))
-	start = time.Now()
+	//fmt.Printf("picture converted to grayscale in %s\n", time.Since(start))
+	//start = time.Now()
 	cParams := pigo.CascadeParams{
 		MinSize:     100,
 		MaxSize:     800,
@@ -111,7 +109,7 @@ func detectFaces(classifier *pigo.Pigo) ([]pigo.Detection, image.Image, error) {
 		},
 	}
 	detections := classifier.RunCascade(cParams, 0.0)
-	fmt.Printf("cascade ran in %s\n", time.Since(start))
+	//fmt.Printf("cascade ran in %s\n", time.Since(start))
 	faces := classifier.ClusterDetections(detections, 0)
 	return faces, img, nil
 }
