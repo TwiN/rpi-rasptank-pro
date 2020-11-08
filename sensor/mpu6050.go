@@ -61,7 +61,6 @@ func (m *MPU6050GyroscopeAccelerometerTemperatureSensor) FallDetected() (bool, b
 		// data not there yet, let's try again
 		return m.FallDetected()
 	}
-	//fmt.Printf("[before] ax=%d; ay=%d; az=%d; gx=%d; gy=%d; gz=%d\n", m.Driver.Accelerometer.X, m.Driver.Accelerometer.Y, m.Driver.Accelerometer.Z, m.Driver.Gyroscope.X, m.Driver.Gyroscope.Y, m.Driver.Gyroscope.Z)
 	// Normalize data
 	m.Driver.Accelerometer.X = (m.Driver.Accelerometer.X - m.calibratedAccelerometerOffsetX) / 1000
 	m.Driver.Accelerometer.Y = (m.Driver.Accelerometer.Y - m.calibratedAccelerometerOffsetY) / 1000
@@ -69,7 +68,6 @@ func (m *MPU6050GyroscopeAccelerometerTemperatureSensor) FallDetected() (bool, b
 	m.Driver.Gyroscope.X -= m.calibratedGyroscopeOffsetX
 	m.Driver.Gyroscope.Y -= m.calibratedGyroscopeOffsetY
 	m.Driver.Gyroscope.Z -= m.calibratedGyroscopeOffsetZ
-	//fmt.Printf("[after] ax=%d; ay=%d; az=%d; gx=%d; gy=%d; gz=%d\n", m.Driver.Accelerometer.X, m.Driver.Accelerometer.Y, m.Driver.Accelerometer.Z, m.Driver.Gyroscope.X, m.Driver.Gyroscope.Y, m.Driver.Gyroscope.Z)
 
 	// pitch is used to figure out whether the bot fell forward or backward
 	pitch := -(math.Atan2(float64(m.Driver.Accelerometer.X), math.Sqrt(float64(m.Driver.Accelerometer.Y*m.Driver.Accelerometer.Y+m.Driver.Accelerometer.Z*m.Driver.Accelerometer.Z))) * 180.0) / math.Pi
@@ -79,14 +77,14 @@ func (m *MPU6050GyroscopeAccelerometerTemperatureSensor) FallDetected() (bool, b
 	roll := (math.Atan2(float64(m.Driver.Accelerometer.Y), float64(m.Driver.Accelerometer.Z)) * 180.0) / math.Pi
 
 	if pitch != 0 || roll != 0 {
-		log.Printf("pitch=%.0f; roll=%.0f", pitch, roll)
+		log.Printf("[FallDetected] pitch=%.0f; roll=%.0f", pitch, roll)
 	}
 
 	if pitch > FallDetectionThreshold || pitch < -FallDetectionThreshold || roll > FallDetectionThreshold || roll < -FallDetectionThreshold {
 		if roll < 0 {
-			log.Println("fell on the right side")
+			log.Println("[FallDetected] fell on the right side")
 		} else {
-			log.Println("fell on the left side")
+			log.Println("[FallDetected] fell on the left side")
 		}
 		return true, roll < 0
 	}
