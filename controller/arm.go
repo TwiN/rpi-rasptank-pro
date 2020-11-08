@@ -99,6 +99,33 @@ func (a *Arm) ClawRelease() {
 	a.Relax()
 }
 
+func (a *Arm) ClawExtendGrab(checkpointBeforeMove bool) {
+	a.Lock()
+	defer a.Unlock()
+	a.WakeUp()
+	a.ClawVerticalServo.Checkpoint(checkpointBeforeMove).Move(a.Driver, 0)
+	a.BaseVerticalServo.Checkpoint(checkpointBeforeMove).Move(a.Driver, 50)
+	time.Sleep(400 * time.Millisecond)
+	a.ClawServo.Checkpoint(checkpointBeforeMove).MoveMin(a.Driver)
+}
+
+func (a *Arm) ClawExtendRelease(returnToCheckpoint bool) {
+	a.Lock()
+	defer a.Unlock()
+	a.WakeUp()
+	if returnToCheckpoint {
+		a.ClawVerticalServo.MoveToCheckpointAndClear(a.Driver)
+		a.BaseVerticalServo.MoveToCheckpointAndClear(a.Driver)
+		a.ClawServo.MoveToCheckpointAndClear(a.Driver)
+	} else {
+		a.ClawVerticalServo.MoveDefault(a.Driver)
+		a.BaseVerticalServo.MoveDefault(a.Driver)
+		a.ClawServo.MoveDefault(a.Driver)
+	}
+	time.Sleep(200 * time.Millisecond)
+	a.Relax()
+}
+
 func (a *Arm) Sweep() {
 	a.Lock()
 	defer a.Unlock()
