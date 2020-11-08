@@ -22,14 +22,6 @@ func TakePicture() (*image.NRGBA, error) {
 	if err != nil {
 		return nil, err
 	}
-	//file, err := os.Open("picture.jpeg")
-	//if err != nil {
-	//	return nil, err
-	//}
-	//img, err := jpeg.Decode(file)
-	//if err != nil {
-	//	return nil, errors.Wrap(err, "failed to decode jpeg")
-	//}
 	img, err := pigo.GetImage("picture.jpg")
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode jpeg")
@@ -48,6 +40,7 @@ func Run(arm *controller.Arm) error {
 	}
 	targetX := arm.BaseHorizontalServo.Default
 	targetY := arm.CameraVerticalServo.Default
+	var previousTargetX, previousTargetY int
 	for {
 		//time.Sleep(200 * time.Millisecond)
 		faces, img, err := detectFaces(classifier)
@@ -56,7 +49,7 @@ func Run(arm *controller.Arm) error {
 		}
 		fmt.Printf("detected %d faces\n", len(faces))
 		if len(faces) > 0 {
-			fmt.Printf("x=%d; xCenter=%d; y=%d; yCenter=%d; faces[0].Scale=%d\n", faces[0].Col, img.Bounds().Max.X/2, faces[0].Row, img.Bounds().Max.Y/2, faces[0].Scale)
+			fmt.Printf("x=%d; xCenter=%d; y=%d; yCenter=%d; faces[0].Scale=%d detectionScore=%.02f\n", faces[0].Col, img.Bounds().Max.X/2, faces[0].Row, img.Bounds().Max.Y/2, faces[0].Scale, faces[0].Q)
 
 			if math.Abs(float64((img.Bounds().Max.X/2)-faces[0].Col)) > 200 {
 				if faces[0].Col > img.Bounds().Max.X/2 {
@@ -69,7 +62,7 @@ func Run(arm *controller.Arm) error {
 			} else {
 				fmt.Println("not moving bc close enough")
 			}
-			if math.Abs(float64((img.Bounds().Max.Y/2)-faces[0].Row)) > 100 {
+			if math.Abs(float64((img.Bounds().Max.Y/2)-faces[0].Row)) > 200 {
 				if faces[0].Row > img.Bounds().Max.Y/2 {
 					fmt.Println("^")
 					targetY -= 10
@@ -84,7 +77,12 @@ func Run(arm *controller.Arm) error {
 			targetX = arm.BaseHorizontalServo.Default
 			targetY = arm.CameraVerticalServo.Default
 		}
-		arm.LookAt(targetX, targetY)
+		fmt.Printf("targetX=%d; targetY=%d\n", targetX, targetY)
+		if targetX != previousTargetX || targetY != previousTargetY {
+			arm.LookAt(targetX, targetY)
+		}
+		previousTargetX = targetX
+		previousTargetY = targetY
 	}
 	return nil
 }
@@ -114,9 +112,6 @@ func detectFaces(classifier *pigo.Pigo) ([]pigo.Detection, image.Image, error) {
 	}
 	detections := classifier.RunCascade(cParams, 0.0)
 	fmt.Printf("cascade ran in %s\n", time.Since(start))
-	start = time.Now()
 	faces := classifier.ClusterDetections(detections, 0)
-	fmt.Printf("cluster detection finished in %s\n", time.Since(start))
-	start = time.Now()
 	return faces, img, nil
 }

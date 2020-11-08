@@ -40,12 +40,10 @@ func main() {
 		if err := screen.DisplayIP(); err != nil {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
-		arm.Center()
-		time.Sleep(500 * time.Millisecond)
-		arm.Relax()
+		arm.MoveToDefaultPosition()
 		mpu6050Sensor.Calibrate()
 		time.Sleep(100 * time.Millisecond)
-
+		//arm.Sweep()
 		// Automatically get back up if bot falls
 		numberOfAttemptsToGetBackUp := 0
 		gobot.Every(5*time.Second, func() {
@@ -91,7 +89,7 @@ func main() {
 		gobot.Every(5*time.Second, func() {
 			distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
 			if distanceFromObstacle != sensor.InvalidMeasurement && distanceFromObstacle < 30 {
-				if gobot.Rand(100) < 10 {
+				if gobot.Rand(100) < 5 {
 					arm.ClawGrab()
 					time.Sleep(time.Second)
 					arm.ClawRelease()
