@@ -7,6 +7,7 @@ import (
 	"github.com/TwinProduction/rpi-rasptank-pro/input"
 	"github.com/TwinProduction/rpi-rasptank-pro/sensor"
 	"gobot.io/x/gobot"
+	"gobot.io/x/gobot/platforms/joystick"
 	"gobot.io/x/gobot/platforms/raspi"
 	"log"
 	"time"
@@ -28,6 +29,7 @@ import (
 
 func main() {
 	rpi := raspi.NewAdaptor()
+	joystickAdaptor := joystick.NewAdaptor()
 	screen := display.NewDisplay(rpi)
 	vehicle := controller.NewVehicle(rpi)
 	arm := controller.NewArm(rpi)
@@ -35,6 +37,7 @@ func main() {
 	mpu6050Sensor := sensor.NewMPU6050GyroscopeAccelerometerTemperatureSensor(rpi)
 	ultrasonicSensor := sensor.NewUltrasonicSensor()
 	keyboard := input.NewKeyboard()
+	joystick := input.NewJoystick(joystickAdaptor)
 
 	work := func() {
 		if err := screen.DisplayIP(); err != nil {
@@ -124,7 +127,8 @@ func main() {
 
 		vehicle.Stop()
 
-		keyboard.HandleKeyboardEvents(vehicle)
+		//keyboard.HandleKeyboardEvents(vehicle)
+		joystick.Handle(vehicle, arm)
 
 		//if err := camera.Run(arm); err != nil {
 		//	log.Println("Failed to run camera:", err.Error())
@@ -195,8 +199,8 @@ func main() {
 	}
 
 	robot := gobot.NewRobot("bot",
-		[]gobot.Connection{rpi},
-		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, arm.Driver, mpu6050Sensor.Driver, lighting.BoardLedA, lighting.BoardLedB, lighting.BoardLedC, keyboard.Driver},
+		[]gobot.Connection{rpi, joystickAdaptor},
+		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, arm.Driver, mpu6050Sensor.Driver, lighting.BoardLedA, lighting.BoardLedB, lighting.BoardLedC, keyboard.Driver, joystick.Driver},
 		work,
 	)
 

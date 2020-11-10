@@ -43,9 +43,9 @@ func NewArm(rpi *raspi.Adaptor) *Arm {
 		},
 		ClawVerticalServo: &servo{
 			Pin:     "3",
-			Default: 90,
+			Default: 70,
 			Min:     0,
-			Max:     90,
+			Max:     120,
 		},
 		CameraVerticalServo: &servo{
 			Pin:     "4",
@@ -147,6 +147,35 @@ func (a *Arm) LookAt(x, y int) {
 	a.CameraVerticalServo.Move(a.Driver, y)
 	time.Sleep(300 * time.Millisecond)
 	a.Relax()
+}
+
+func (a *Arm) MoveBaseHorizontal(degrees int) {
+	a.Lock()
+	defer a.Unlock()
+	a.WakeUp()
+	a.BaseHorizontalServo.Move(a.Driver, a.BaseHorizontalServo.Default+degrees)
+	a.Relax()
+}
+
+func (a *Arm) MoveBaseVertical(degrees int) {
+	a.Lock()
+	defer a.Unlock()
+	a.WakeUp()
+	a.BaseVerticalServo.Move(a.Driver, a.BaseVerticalServo.Default+-degrees)
+}
+
+func (a *Arm) MoveClawVertical(degrees int) {
+	a.Lock()
+	defer a.Unlock()
+	a.WakeUp()
+	a.ClawVerticalServo.Move(a.Driver, a.ClawVerticalServo.Default+degrees)
+}
+
+func (a *Arm) MoveClaw(degrees int) {
+	a.Lock()
+	defer a.Unlock()
+	a.WakeUp()
+	a.ClawServo.Move(a.Driver, a.ClawServo.Default+degrees)
 }
 
 func (a *Arm) PushUpLeft() {

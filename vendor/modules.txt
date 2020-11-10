@@ -27,12 +27,15 @@ github.com/sigurn/utils
 # github.com/stianeikeland/go-rpio v4.2.0+incompatible
 ## explicit
 github.com/stianeikeland/go-rpio
+# github.com/veandco/go-sdl2 v0.3.3
+github.com/veandco/go-sdl2/sdl
 # gobot.io/x/gobot v1.14.0
 ## explicit
 gobot.io/x/gobot
 gobot.io/x/gobot/drivers/gpio
 gobot.io/x/gobot/drivers/i2c
 gobot.io/x/gobot/drivers/spi
+gobot.io/x/gobot/platforms/joystick
 gobot.io/x/gobot/platforms/keyboard
 gobot.io/x/gobot/platforms/raspi
 gobot.io/x/gobot/sysfs
