@@ -1,7 +1,6 @@
 package input
 
 import (
-	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"gobot.io/x/gobot/platforms/joystick"
 )
@@ -16,7 +15,7 @@ func NewJoystick(adaptor *joystick.Adaptor) *Joystick {
 	}
 }
 
-func (j *Joystick) Handle(vehicle *controller.Vehicle, arm *controller.Arm) {
+func (j *Joystick) Handle(vehicle *controller.Vehicle, arm *controller.Arm, lighting *controller.Lighting) {
 	j.Driver.On(joystick.UpPress, func(data interface{}) {
 		vehicle.Forward()
 	})
@@ -46,11 +45,9 @@ func (j *Joystick) Handle(vehicle *controller.Vehicle, arm *controller.Arm) {
 		arm.MoveBaseHorizontal(int(data.(int16) / 500))
 	})
 	j.Driver.On(joystick.LeftY, func(data interface{}) {
-		arm.MoveBaseVertical(int(data.(int16) / 250))
+		arm.MoveBaseVertical(int(data.(int16) / 200))
 	})
 	j.Driver.On(joystick.RightX, func(data interface{}) {
-		fmt.Println("right_x:", data)
-
 		arm.MoveClawVertical(int(data.(int16) / 250))
 	})
 	//j.Driver.On(joystick.RightY, func(data interface{}) {
@@ -62,5 +59,15 @@ func (j *Joystick) Handle(vehicle *controller.Vehicle, arm *controller.Arm) {
 	})
 	j.Driver.On(joystick.ARelease, func(data interface{}) {
 		arm.ClawRelease()
+	})
+
+	toggleLights := false
+	j.Driver.On(joystick.YPress, func(data interface{}) {
+		if toggleLights {
+			lighting.ClearSideLights()
+		} else {
+			lighting.WhiteSideLights()
+		}
+		toggleLights = !toggleLights
 	})
 }
