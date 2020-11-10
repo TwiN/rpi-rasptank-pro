@@ -43,7 +43,7 @@ func NewArm(rpi *raspi.Adaptor) *Arm {
 		},
 		ClawVerticalServo: &servo{
 			Pin:     "3",
-			Default: 70,
+			Default: 80,
 			Min:     0,
 			Max:     120,
 		},
@@ -73,10 +73,15 @@ func (a *Arm) moveToDefaultPosition() {
 	a.CameraVerticalServo.MoveDefault(a.Driver)
 }
 
+// Relax sets the PWM frequency to 0
+// In other words, the servos will stop actively sending pulses to keep the servos at the
+// position they were last set to
 func (a *Arm) Relax() {
 	_ = a.Driver.SetPWMFreq(0.0)
 }
 
+// WakeUp sets the PWM frequency to 50
+// In other words, thi
 func (a *Arm) WakeUp() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
@@ -154,7 +159,6 @@ func (a *Arm) MoveBaseHorizontal(degrees int) {
 	defer a.Unlock()
 	a.WakeUp()
 	a.BaseHorizontalServo.Move(a.Driver, a.BaseHorizontalServo.Default+degrees)
-	a.Relax()
 }
 
 func (a *Arm) MoveBaseVertical(degrees int) {
@@ -169,13 +173,6 @@ func (a *Arm) MoveClawVertical(degrees int) {
 	defer a.Unlock()
 	a.WakeUp()
 	a.ClawVerticalServo.Move(a.Driver, a.ClawVerticalServo.Default+degrees)
-}
-
-func (a *Arm) MoveClaw(degrees int) {
-	a.Lock()
-	defer a.Unlock()
-	a.WakeUp()
-	a.ClawServo.Move(a.Driver, a.ClawServo.Default+degrees)
 }
 
 func (a *Arm) PushUpLeft() {

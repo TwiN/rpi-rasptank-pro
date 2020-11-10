@@ -125,10 +125,19 @@ func main() {
 			}
 		})
 
+		// Wake arm up every 5 seconds to make sure that the servos are in their configured positions
+		gobot.Every(5*time.Second, func() {
+			arm.Lock()
+			arm.WakeUp()
+			time.Sleep(300 * time.Millisecond)
+			arm.Relax()
+			arm.Unlock()
+		})
+
 		vehicle.Stop()
 
 		//keyboard.HandleKeyboardEvents(vehicle)
-		joystick.Handle(vehicle, arm)
+		//joystick.Handle(vehicle, arm, lighting)
 
 		//if err := camera.Run(arm); err != nil {
 		//	log.Println("Failed to run camera:", err.Error())
@@ -198,11 +207,22 @@ func main() {
 		//}
 	}
 
-	robot := gobot.NewRobot("bot",
-		[]gobot.Connection{rpi, joystickAdaptor},
-		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, arm.Driver, mpu6050Sensor.Driver, lighting.BoardLedA, lighting.BoardLedB, lighting.BoardLedC, keyboard.Driver, joystick.Driver},
-		work,
-	)
+	connections := []gobot.Connection{rpi}
+	devices := []gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, arm.Driver, mpu6050Sensor.Driver, lighting.BoardLedA, lighting.BoardLedB, lighting.BoardLedC, keyboard.Driver}
 
+	// Only add joystick if it works
+	// Trying to start a robot with a joystick when there's none connected would
+	// prevent the robot from starting, so we have to do this.
+	err := joystickAdaptor.Connect()
+	if err != nil {
+		log.Println("[main] Not adding Joystick adaptor and device because:", err.Error())
+	} else {
+		// Close the joystick adaptor - we'll let robot.Start() initialize it
+		_ = joystickAdaptor.Finalize()
+		connections = append(connections, joystickAdaptor)
+		devices = append(devices, joystick.Driver)
+	}
+
+	robot := gobot.NewRobot("bot", connections, devices, work)
 	robot.Start()
 }
