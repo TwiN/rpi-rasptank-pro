@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
+	"github.com/TwinProduction/rpi-rasptank-pro/input"
 	"github.com/TwinProduction/rpi-rasptank-pro/sensor"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/platforms/raspi"
@@ -33,22 +34,29 @@ func main() {
 	lighting := controller.NewLighting(rpi)
 	mpu6050Sensor := sensor.NewMPU6050GyroscopeAccelerometerTemperatureSensor(rpi)
 	ultrasonicSensor := sensor.NewUltrasonicSensor()
+	keyboard := input.NewKeyboard()
 
 	work := func() {
 		if err := screen.DisplayIP(); err != nil {
 			log.Printf("Failed to write on screen: %s", err.Error())
 		}
 
+		time.Sleep(50 * time.Millisecond)
+
 		lighting.RedSideLights()
-		arm.MoveToDefaultPosition()
-		lighting.OrangeSideLights()
-		// Wait for a bit after moving arm to make sure that calibration won't be impacted by arm movement
-		time.Sleep(500 * time.Millisecond)
-		lighting.YellowSideLights()
 		mpu6050Sensor.Calibrate()
+		lighting.OrangeSideLights()
+
+		time.Sleep(250 * time.Millisecond)
+
+		lighting.YellowSideLights()
+		arm.MoveToDefaultPosition()
 		lighting.GreenSideLights()
-		time.Sleep(100 * time.Millisecond)
+
+		time.Sleep(500 * time.Millisecond)
+
 		lighting.ClearSideLights()
+
 		//arm.Sweep()
 
 		//arm.ClawExtendGrab(true)
@@ -115,6 +123,8 @@ func main() {
 		})
 
 		vehicle.Stop()
+
+		keyboard.HandleKeyboardEvents(vehicle)
 
 		//if err := camera.Run(arm); err != nil {
 		//	log.Println("Failed to run camera:", err.Error())
@@ -186,7 +196,7 @@ func main() {
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, arm.Driver, mpu6050Sensor.Driver, lighting.BoardLedA, lighting.BoardLedB, lighting.BoardLedC},
+		[]gobot.Device{screen.Driver, vehicle.LeftMotor, vehicle.RightMotor, arm.Driver, mpu6050Sensor.Driver, lighting.BoardLedA, lighting.BoardLedB, lighting.BoardLedC, keyboard.Driver},
 		work,
 	)
 
