@@ -118,26 +118,25 @@ func main() {
 			distanceFromObstacle := ultrasonicSensor.MeasureDistanceReliably()
 			if distanceFromObstacle != sensor.InvalidMeasurement && distanceFromObstacle < 30 {
 				if gobot.Rand(100) < 5 {
-					arm.ClawGrab()
-					time.Sleep(time.Second)
-					arm.ClawRelease()
+					arm.ClawGrabAndRelease()
 				}
 			}
 		})
 
 		// Wake arm up every 5 seconds to make sure that the servos are in their configured positions
-		gobot.Every(5*time.Second, func() {
-			arm.Lock()
-			arm.WakeUp()
-			time.Sleep(300 * time.Millisecond)
-			arm.Relax()
-			arm.Unlock()
-		})
+		// This is just more energy efficient than having the servos permanently running
+		//gobot.Every(500*time.Millisecond, func() {
+		     //	arm.Lock()
+		//	arm.WakeUp()
+		//	time.Sleep(100 * time.Millisecond)
+		//	arm.Relax()
+		//	arm.Unlock()
+		//})
 
 		vehicle.Stop()
 
 		//keyboard.HandleKeyboardEvents(vehicle)
-		//joystick.Handle(vehicle, arm, lighting)
+		joystick.Handle(vehicle, arm, lighting)
 
 		//if err := camera.Run(arm); err != nil {
 		//	log.Println("Failed to run camera:", err.Error())

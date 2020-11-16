@@ -30,3 +30,7 @@ You also need SDL2:
 ```
 sudo apt-get install libsdl2-dev
 ```
+
+You might also have to disable to `sap` plugin:
+- Type `sudo systemctl edit --full bluetooth.service`
+- Add `--noplugin=sap` at the end of the line starting with `ExecStart=`

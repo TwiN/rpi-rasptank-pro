@@ -81,18 +81,30 @@ func (a *Arm) Relax() {
 }
 
 // WakeUp sets the PWM frequency to 50
-// In other words, thi
 func (a *Arm) WakeUp() {
 	if err := a.Driver.SetPWMFreq(50.0); err != nil {
 		log.Printf("failed to set PWM freq to 50.0: %s", err.Error())
 	}
 }
 
+func (a *Arm) ClawGrabAndRelease() {
+	a.Lock()
+	defer a.Unlock()
+	a.WakeUp()
+	a.ClawServo.MoveMin(a.Driver)
+	time.Sleep(time.Second)
+	a.ClawServo.MoveMax(a.Driver)
+	time.Sleep(100 * time.Millisecond)
+	a.Relax()
+}
+
 func (a *Arm) ClawGrab() {
 	a.Lock()
 	defer a.Unlock()
 	a.WakeUp()
-	a.ClawServo.Move(a.Driver, 0)
+	a.ClawServo.MoveMin(a.Driver)
+	time.Sleep(100 * time.Millisecond)
+	a.Relax()
 }
 
 func (a *Arm) ClawRelease() {
