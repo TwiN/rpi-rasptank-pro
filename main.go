@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"github.com/TwinProduction/rpi-rasptank-pro/display"
 	"github.com/TwinProduction/rpi-rasptank-pro/input"
@@ -9,8 +12,6 @@ import (
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/platforms/joystick"
 	"gobot.io/x/gobot/platforms/raspi"
-	"log"
-	"time"
 )
 
 // 12: left DC motor backward
@@ -126,7 +127,7 @@ func main() {
 		// Wake arm up every 5 seconds to make sure that the servos are in their configured positions
 		// This is just more energy efficient than having the servos permanently running
 		//gobot.Every(500*time.Millisecond, func() {
-		     //	arm.Lock()
+		//	arm.Lock()
 		//	arm.WakeUp()
 		//	time.Sleep(100 * time.Millisecond)
 		//	arm.Relax()

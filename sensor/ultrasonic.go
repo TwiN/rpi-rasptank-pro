@@ -2,9 +2,10 @@ package sensor
 
 import (
 	"fmt"
-	"github.com/stianeikeland/go-rpio"
 	"sync"
 	"time"
+
+	"github.com/stianeikeland/go-rpio"
 )
 
 const (

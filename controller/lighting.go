@@ -1,10 +1,11 @@
 package controller
 
 import (
+	"log"
+
 	ws281x "github.com/rpi-ws281x/rpi-ws281x-go"
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
-	"log"
 )
 
 const (

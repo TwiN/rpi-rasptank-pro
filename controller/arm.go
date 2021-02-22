@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"gobot.io/x/gobot/drivers/i2c"
-	"gobot.io/x/gobot/platforms/raspi"
 	"log"
 	"sync"
 	"time"
+
+	"gobot.io/x/gobot/drivers/i2c"
+	"gobot.io/x/gobot/platforms/raspi"
 )
 
 const (

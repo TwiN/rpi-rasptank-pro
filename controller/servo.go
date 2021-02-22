@@ -3,8 +3,9 @@ package controller
 import (
 	"errors"
 	"fmt"
-	"gobot.io/x/gobot/drivers/i2c"
 	"log"
+
+	"gobot.io/x/gobot/drivers/i2c"
 )
 
 type servo struct {

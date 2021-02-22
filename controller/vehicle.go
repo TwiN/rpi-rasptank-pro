@@ -1,9 +1,10 @@
 package controller
 
 import (
+	"log"
+
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
-	"log"
 )
 
 const (

@@ -1,10 +1,11 @@
 package sensor
 
 import (
-	"gobot.io/x/gobot/drivers/i2c"
-	"gobot.io/x/gobot/platforms/raspi"
 	"log"
 	"math"
+
+	"gobot.io/x/gobot/drivers/i2c"
+	"gobot.io/x/gobot/platforms/raspi"
 )
 
 const (

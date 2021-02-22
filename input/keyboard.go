@@ -2,9 +2,10 @@ package input
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/TwinProduction/rpi-rasptank-pro/controller"
 	"gobot.io/x/gobot/platforms/keyboard"
-	"time"
 )
 
 type Keyboard struct {

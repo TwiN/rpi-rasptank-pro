@@ -2,14 +2,15 @@ package camera
 
 import (
 	"fmt"
-	"github.com/TwinProduction/rpi-rasptank-pro/controller"
-	pigo "github.com/esimov/pigo/core"
-	"github.com/pkg/errors"
 	"image"
 	_ "image/jpeg"
 	"io/ioutil"
 	"math"
 	"os/exec"
+
+	"github.com/TwinProduction/rpi-rasptank-pro/controller"
+	pigo "github.com/esimov/pigo/core"
+	"github.com/pkg/errors"
 )
 
 const (
