@@ -5,10 +5,11 @@ import (
 	"log"
 	"time"
 
-	"github.com/TwinProduction/rpi-rasptank-pro/controller"
-	"github.com/TwinProduction/rpi-rasptank-pro/display"
-	"github.com/TwinProduction/rpi-rasptank-pro/input"
-	"github.com/TwinProduction/rpi-rasptank-pro/sensor"
+	"github.com/TwiN/rpi-rasptank-pro/camera"
+	"github.com/TwiN/rpi-rasptank-pro/controller"
+	"github.com/TwiN/rpi-rasptank-pro/display"
+	"github.com/TwiN/rpi-rasptank-pro/input"
+	"github.com/TwiN/rpi-rasptank-pro/sensor"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/platforms/joystick"
 	"gobot.io/x/gobot/platforms/raspi"
@@ -139,9 +140,9 @@ func main() {
 		//keyboard.HandleKeyboardEvents(vehicle)
 		joystick.Handle(vehicle, arm, lighting)
 
-		//if err := camera.Run(arm); err != nil {
-		//	log.Println("Failed to run camera:", err.Error())
-		//}
+		if err := camera.Run(arm); err != nil {
+			log.Println("Failed to run camera:", err.Error())
+		}
 
 		//time.Sleep(time.Second)
 		//arm.PushUpRight()

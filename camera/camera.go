@@ -8,7 +8,7 @@ import (
 	"math"
 	"os/exec"
 
-	"github.com/TwinProduction/rpi-rasptank-pro/controller"
+	"github.com/TwiN/rpi-rasptank-pro/controller"
 	pigo "github.com/esimov/pigo/core"
 	"github.com/pkg/errors"
 )

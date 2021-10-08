@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/TwinProduction/rpi-rasptank-pro/controller"
+	"github.com/TwiN/rpi-rasptank-pro/controller"
 	"gobot.io/x/gobot/platforms/keyboard"
 )
 

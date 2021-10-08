@@ -1,6 +1,6 @@
 [![GoDoc](https://godoc.org/github.com/rpi-ws281x/rpi-ws281x-go?status.svg)](http://godoc.org/github.com/rpi-ws281x/rpi-ws281x-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/rpi-ws281x/rpi-ws281x-go)](https://goreportcard.com/report/github.com/rpi-ws281x/rpi-ws281x-go)
-[![CircleCI](https://circleci.com/gh/rpi-ws281x/rpi-ws281x-go.svg?style=shield)](https://circleci.com/gh/rpi-ws281x/rpi-ws281x-go)
+[![Actions](https://github.com/rpi-ws281x/rpi-ws281x-go/workflows/CI/badge.svg)](https://github.com/rpi-ws281x/rpi-ws281x-go/actions)
 [![license](https://img.shields.io/github/license/rpi-ws281x/rpi-ws281x-go.svg)](https://github.com/rpi-ws281x/rpi-ws281x-go)
 
 # rpi-ws281x-go
@@ -17,7 +17,7 @@ This module is a wrapper around the [rpi_ws281x](https://github.com/jgarff/rpi_w
 
 **This is not the recommended way**, but if you want to compile everything on the Raspbery Pi itself, start by building
 the pi_ws281x C library according to the [documentation](https://github.com/jgarff/rpi_ws281x#build),
-copy the `*.a` files to `/usr/local/bin` and the `*.h` files to `/usr/local/include`.
+copy the `*.a` files to `/usr/local/lib` and the `*.h` files to `/usr/local/include`.
 
 Then you can compile the go code as usual.
 

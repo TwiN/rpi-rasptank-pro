@@ -6,7 +6,7 @@ import (
 	"image/color"
 	"strings"
 
-	"github.com/TwinProduction/rpi-rasptank-pro/util"
+	"github.com/TwiN/rpi-rasptank-pro/util"
 	"github.com/pbnjay/pixfont"
 	"gobot.io/x/gobot/drivers/i2c"
 	"gobot.io/x/gobot/platforms/raspi"
